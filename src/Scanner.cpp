@@ -276,3 +276,22 @@ void Scanner::processComment()
     }
     GetNextToken();
 }
+
+void Scanner::processLiteral()
+{
+    Literal = "";
+    inFile.get(currentChar);
+    while (currentChar != std::char_traits<char>::eof() && 
+           currentChar != '\n' && 
+           currentChar != '"')
+    {
+        Literal.push_back(currentChar);
+        inFile.get(currentChar);
+    }
+    if (currentChar == '\n' || currentChar == std::char_traits<char>::eof())
+    {
+        throw std::runtime_error("Unclosed String Literal");
+    }
+    Lexeme = Literal.substr(0, 17);
+    Token = strt;
+}
