@@ -179,3 +179,25 @@ void Scanner::readWord()
         inFile.get(currentChar);
     }
 }
+
+void Scanner::readNum()
+{
+    Lexeme = "";
+    Lexeme.push_back(currentChar);
+    inFile.get(currentChar);
+    while (currentChar != std::char_traits<char>::eof() && isdigit(currentChar))
+    {
+        Lexeme.push_back(currentChar);
+        inFile.get(currentChar);
+    }
+    if (currentChar == '.')
+    {
+        Lexeme.push_back(currentChar);
+        inFile.get(currentChar);
+        while (currentChar != std::char_traits<char>::eof() && isdigit(currentChar))
+        {
+            Lexeme.push_back(currentChar);
+            inFile.get(currentChar);
+        }
+    }
+}
