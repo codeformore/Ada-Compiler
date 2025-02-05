@@ -262,3 +262,17 @@ void Scanner::processDoubleToken()
         inFile.get(currentChar);
     }
 }
+
+void Scanner::processComment()
+{
+    inFile.get(currentChar);
+    while (currentChar != std::char_traits<char>::eof() && currentChar != '\n')
+    {
+        inFile.get(currentChar);
+    }
+    if (currentChar == '\n')
+    {
+        inFile.get(currentChar);
+    }
+    GetNextToken();
+}
