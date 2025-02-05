@@ -50,6 +50,14 @@ Scanner::Scanner(std::string fileName)
     //If we got here, the file is open and ready to go.
 }
 
+Scanner::~Scanner()
+{
+    if (inFile.is_open())
+    {
+        inFile.close();
+    }
+}
+
 void Scanner::GetNextToken()
 {
     //Read until eof reached or blank 
