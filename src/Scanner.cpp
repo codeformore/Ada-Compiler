@@ -201,3 +201,41 @@ void Scanner::readNum()
         }
     }
 }
+
+void Scanner::processSingleToken()
+{
+    Lexeme = ""; 
+    Lexeme.push_back(currentChar);
+    switch (currentChar)
+    {
+    case '=':
+    case '<':
+    case '>':
+        Token = relopt;
+        break;
+    
+    case '+':
+    case '-':
+        Token = addopt;
+        break;
+    
+    case '*':
+    case '/':
+        Token = mulopt;
+        break;
+    
+    case '(': Token = lpart; break;
+    case ')': Token = rpart; break;
+    case ',': Token = commat; break;
+    case ':': Token = colont; break;
+    case ';': Token = semit; break;
+    case '.': Token = periodt; break;
+    
+    default:
+        Token = unknownt;
+        throw std::runtime_error("Unknown Symbol " + currentChar);
+        break;
+    }
+
+    inFile.get(currentChar);
+}
