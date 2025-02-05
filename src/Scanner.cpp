@@ -236,6 +236,29 @@ void Scanner::processSingleToken()
         throw std::runtime_error("Unknown Symbol " + currentChar);
         break;
     }
+}
 
-    inFile.get(currentChar);
+void Scanner::processDoubleToken()
+{
+    inFile.get(lookAheadChar);
+    if (lookAheadChar != '=') 
+    {
+        processSingleToken();
+        currentChar = lookAheadChar;
+    }
+    else
+    {
+        Lexeme = "";
+        Lexeme.push_back(currentChar);
+        Lexeme.push_back(lookAheadChar);
+        if (currentChar == ':')
+        {
+            Token = assignt;
+        }
+        else
+        {
+            Token = relopt;
+        }
+        inFile.get(currentChar);
+    }
 }
