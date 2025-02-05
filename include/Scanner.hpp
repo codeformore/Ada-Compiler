@@ -31,7 +31,7 @@ enum TokenT
     elset, elseift, whilet, loopt, floatt, integert, chart,
     gett, putt, endt, lpart, rpart, commat, colont,
     idt, numt, strt, assignt, relopt, addopt, mulopt,
-    semit, periodt, eoft
+    semit, periodt, eoft, unknownt
 };
 
 const std::map<std::string, TokenT> KEYWORDS = {

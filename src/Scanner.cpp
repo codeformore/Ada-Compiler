@@ -22,6 +22,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <cctype>
+#include <algorithm>
 
 Scanner::Scanner(std::string fileName)
 {
@@ -50,6 +51,7 @@ Scanner::Scanner(std::string fileName)
 
 void Scanner::GetNextToken()
 {
+    //Read until eof reached or blank 
     while (currentChar != std::char_traits<char>::eof() && isblank(currentChar))
     {
         inFile.get(currentChar);
@@ -73,14 +75,18 @@ void Scanner::processToken()
     {
         processWordToken();
     }
+    //If currentChar is a digit, process a numerical token
     else if (isdigit(currentChar))
     {
         processNumToken();
     }
+    //Otherwise, we will check if currentChar could be a double token
     else
     {
+        //Check double token cases
         switch (currentChar)
         {
+        //Could be a Comment or addop
         case '-':
             inFile.get(lookAheadChar);
             if (lookAheadChar == '-') 
@@ -93,10 +99,12 @@ void Scanner::processToken()
             }
             break;
         
+        //This will be a literal
         case '"':
             processLiteral();
             break;
 
+        //Other double token cases
         case ':':
         case '/':
         case '<':
@@ -104,9 +112,48 @@ void Scanner::processToken()
             processDoubleToken();
             break;
 
+        //Ok, it definitely is a single token or unknown
         default:
             processSingleToken();
             break;
+        }
+    }
+}
+
+void Scanner::processWordToken()
+{
+    readWord();
+    std::string lowerLexeme = Lexeme; 
+    std::transform(lowerLexeme.begin(), lowerLexeme.end(), lowerLexeme.begin(),
+        [](unsigned char c){ return std::tolower(c); });
+    std::map<std::string, TokenT>::const_iterator it;
+    for (it = KEYWORDS.begin(); it != KEYWORDS.end(); it++)
+    {
+        if (it->first == lowerLexeme && isblank(currentChar))
+        {
+            Token = it->second;
+            return;
+        }
+    }
+
+    if (lowerLexeme == "or") 
+    {
+        Token = addopt;
+    }
+    else if (lowerLexeme == "rem" || lowerLexeme == "mod" || lowerLexeme == "and")
+    {
+        Token = mulopt;
+    }
+    else
+    {
+        if (lowerLexeme.length() <= 17)
+        {
+            Token = idt;
+        }
+        else
+        {
+            Token = unknownt;
+            throw std::runtime_error("Identifier too long");
         }
     }
 }
