@@ -65,3 +65,48 @@ void Scanner::GetNextToken()
         processToken();
     }
 }
+
+void Scanner::processToken()
+{
+    //If the currentChar is a letter, process a word token
+    if (isalpha(currentChar))
+    {
+        processWordToken();
+    }
+    else if (isdigit(currentChar))
+    {
+        processNumToken();
+    }
+    else
+    {
+        switch (currentChar)
+        {
+        case '-':
+            inFile.get(lookAheadChar);
+            if (lookAheadChar == '-') 
+            {
+                processComment();
+            }
+            else
+            {
+                processSingleToken();
+            }
+            break;
+        
+        case '"':
+            processLiteral();
+            break;
+
+        case ':':
+        case '/':
+        case '<':
+        case '>':
+            processDoubleToken();
+            break;
+
+        default:
+            processSingleToken();
+            break;
+        }
+    }
+}
