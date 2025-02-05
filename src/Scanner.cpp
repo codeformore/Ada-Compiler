@@ -21,8 +21,9 @@
 #include <Scanner.hpp>
 #include <iostream>
 #include <stdexcept>
-#include <cctype>
 #include <algorithm>
+#include <cctype>
+#include <cmath>
 
 Scanner::Scanner(std::string fileName)
 {
@@ -156,4 +157,12 @@ void Scanner::processWordToken()
             throw std::runtime_error("Identifier too long");
         }
     }
+}
+
+void Scanner::processNumToken()
+{
+    readNum();
+    ValueR = atof(Lexeme.c_str());
+    Value = (int)floor(ValueR);
+    Token = numt;
 }
