@@ -166,3 +166,16 @@ void Scanner::processNumToken()
     Value = (int)floor(ValueR);
     Token = numt;
 }
+
+void Scanner::readWord()
+{
+    Lexeme = "";
+    Lexeme.push_back(currentChar);
+    inFile.get(currentChar);
+    while (currentChar != std::char_traits<char>::eof() && 
+           (isalnum(currentChar) || currentChar == '_'))
+    {
+        Lexeme.push_back(currentChar);
+        inFile.get(currentChar);
+    }
+}
