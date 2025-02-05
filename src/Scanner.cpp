@@ -47,3 +47,21 @@ Scanner::Scanner(std::string fileName)
 
     //If we got here, the file is open and ready to go.
 }
+
+void Scanner::GetNextToken()
+{
+    while (currentChar != std::char_traits<char>::eof() && isblank(currentChar))
+    {
+        inFile.get(currentChar);
+    }
+
+    //If we have the eof char, return the eoft token. Otherwise, start processToken
+    if (currentChar == std::char_traits<char>::eof())
+    {
+        Token = eoft;
+    }
+    else
+    {
+        processToken();
+    }
+}
