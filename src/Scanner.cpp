@@ -105,6 +105,7 @@ void Scanner::processToken()
             else
             {
                 processSingleToken();
+                inFile.get(currentChar);
             }
             break;
         
@@ -124,6 +125,7 @@ void Scanner::processToken()
         //Ok, it definitely is a single token or unknown
         default:
             processSingleToken();
+            inFile.get(currentChar);
             break;
         }
     }
