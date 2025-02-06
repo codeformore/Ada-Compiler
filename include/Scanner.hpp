@@ -41,6 +41,16 @@ const std::map<std::string, TokenT> KEYWORDS = {
     {"put", putt}, {"end", endt}
 };
 
+const std::map<TokenT, std::string> TOKEN_NAMES = {
+    {begint, "begint"}, {modulet, "modulet"}, {constt, "constantt"}, {proct, "proct"}, {ist, "ist"},
+    {ift, "ift"}, {thent, "thent"}, {elset, "elset"}, {elseift, "elseift"}, {whilet, "whilet"},
+    {loopt, "loopt"}, {floatt, "floatt"}, {integert, "integert"}, {chart, "chart"}, {gett, "gett"},
+    {putt, "putt"}, {endt, "endt"}, {lpart, "lpart"}, {rpart, "rpart"}, {commat, "commat"},
+    {colont, "colont"}, {idt, "idt"}, {numt, "numt"}, {strt, "strt"}, {assignt, "assignt"},
+    {relopt, "relopt"}, {addopt, "addopt"}, {mulopt, "mulopt"}, {semit, "semit"}, {periodt, "periodt"}, 
+    {eoft, "eoft"}, {unknownt, "unknownt"}
+};
+
 class Scanner
 {
 private:
