@@ -61,7 +61,7 @@ Scanner::~Scanner()
 void Scanner::GetNextToken()
 {
     //Read until eof reached or blank 
-    while (currentChar != std::char_traits<char>::eof() && isblank(currentChar))
+    while (currentChar != std::char_traits<char>::eof() && isspace(currentChar))
     {
         inFile.get(currentChar);
     }
