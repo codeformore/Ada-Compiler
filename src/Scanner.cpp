@@ -131,10 +131,15 @@ void Scanner::processToken()
 
 void Scanner::processWordToken()
 {
+    //First read the rest of the word
     readWord();
+
+    //Make a lowercase version of the Lexeme
     std::string lowerLexeme = Lexeme; 
     std::transform(lowerLexeme.begin(), lowerLexeme.end(), lowerLexeme.begin(),
         [](unsigned char c){ return std::tolower(c); });
+
+    //Check if it is a keyword
     std::map<std::string, TokenT>::const_iterator it;
     for (it = KEYWORDS.begin(); it != KEYWORDS.end(); it++)
     {
@@ -145,16 +150,20 @@ void Scanner::processWordToken()
         }
     }
 
+    //If it is not a keyword, check if it is or
     if (lowerLexeme == "or") 
     {
         Token = addopt;
     }
+    //If not, check if it is one of rem mod and
     else if (lowerLexeme == "rem" || lowerLexeme == "mod" || lowerLexeme == "and")
     {
         Token = mulopt;
     }
+    //Otherwise, it could be an identifier
     else
     {
+        //An identifier must be <= 17 characters
         if (lowerLexeme.length() <= 17)
         {
             Token = idt;
@@ -162,14 +171,17 @@ void Scanner::processWordToken()
         else
         {
             Token = unknownt;
-            throw std::runtime_error("Identifier too long");
+            throw std::runtime_error("Identifier " + Lexeme + " too long");
         }
     }
 }
 
 void Scanner::processNumToken()
 {
+    //First read the rest of the number
     readNum();
+
+    //Get the numeric values
     ValueR = atof(Lexeme.c_str());
     Value = (int)floor(ValueR);
     Token = numt;
@@ -177,8 +189,11 @@ void Scanner::processNumToken()
 
 void Scanner::readWord()
 {
+    //Clear Lexeme and add the currentChar
     Lexeme = "";
     Lexeme.push_back(currentChar);
+
+    //Grab chars until we get something besides letters, numbers, and underscores
     inFile.get(currentChar);
     while (currentChar != std::char_traits<char>::eof() && 
            (isalnum(currentChar) || currentChar == '_'))
@@ -190,17 +205,25 @@ void Scanner::readWord()
 
 void Scanner::readNum()
 {
+    //Clear Lexeme and add the currentChar
     Lexeme = "";
     Lexeme.push_back(currentChar);
+
+    //Grab chars until we don't have a digit
     inFile.get(currentChar);
     while (currentChar != std::char_traits<char>::eof() && isdigit(currentChar))
     {
         Lexeme.push_back(currentChar);
         inFile.get(currentChar);
     }
+    
+    //If there is a period, then it is a decimal.
     if (currentChar == '.')
     {
+        //Add the period to Lexeme
         Lexeme.push_back(currentChar);
+
+        //Get the decimal part using same loop as the integral part
         inFile.get(currentChar);
         while (currentChar != std::char_traits<char>::eof() && isdigit(currentChar))
         {
@@ -212,8 +235,11 @@ void Scanner::readNum()
 
 void Scanner::processSingleToken()
 {
+    //Clear Lexeme and add the currentChar
     Lexeme = ""; 
     Lexeme.push_back(currentChar);
+
+    //Check the various cases of currentChar
     switch (currentChar)
     {
     case '=':
@@ -239,6 +265,7 @@ void Scanner::processSingleToken()
     case ';': Token = semit; break;
     case '.': Token = periodt; break;
     
+    //If nothing matched, then we don't know the token.
     default:
         Token = unknownt;
         throw std::runtime_error("Unknown Symbol " + currentChar);
@@ -248,17 +275,26 @@ void Scanner::processSingleToken()
 
 void Scanner::processDoubleToken()
 {
+    //Look 1 character ahead
     inFile.get(lookAheadChar);
+
+    //All double tokens have the second token as an =
+    //If it is not an equal, then the token could be a single token
     if (lookAheadChar != '=') 
     {
         processSingleToken();
+        
+        //Since we did not use the lookAheadChar, it becomes the next char
         currentChar = lookAheadChar;
     }
     else
     {
+        //Clear Lexeme and add currentChar and lookAheadChar
         Lexeme = "";
         Lexeme.push_back(currentChar);
         Lexeme.push_back(lookAheadChar);
+
+        //Is it an assign token or relational operator token?
         if (currentChar == ':')
         {
             Token = assignt;
@@ -267,27 +303,37 @@ void Scanner::processDoubleToken()
         {
             Token = relopt;
         }
+
+        //Since we used the lookAheadChar, we get the next char
         inFile.get(currentChar);
     }
 }
 
 void Scanner::processComment()
 {
+    //Grab characters until EOF or \n
     inFile.get(currentChar);
     while (currentChar != std::char_traits<char>::eof() && currentChar != '\n')
     {
         inFile.get(currentChar);
     }
+
+    //If it is a \n, then get the next character.
     if (currentChar == '\n')
     {
         inFile.get(currentChar);
     }
+
+    //Comment is not a token, see if there is a token next
     GetNextToken();
 }
 
 void Scanner::processLiteral()
 {
+    //Clear the literal
     Literal = "";
+
+    //Grab characters until EOF, \n, or "
     inFile.get(currentChar);
     while (currentChar != std::char_traits<char>::eof() && 
            currentChar != '\n' && 
@@ -296,10 +342,14 @@ void Scanner::processLiteral()
         Literal.push_back(currentChar);
         inFile.get(currentChar);
     }
+
+    //If it is either \n or EOF, then we did not close the literal
     if (currentChar == '\n' || currentChar == std::char_traits<char>::eof())
     {
         throw std::runtime_error("Unclosed String Literal");
     }
+
+    //Otherwise, we have a literal.
     Lexeme = Literal.substr(0, 17);
     Token = strt;
 }
