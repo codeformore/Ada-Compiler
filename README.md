@@ -10,4 +10,7 @@ This project is a compiler for a subset of the Ada language. It was built for Co
 ## Dependencies
 * g++ - For compilation and linking
 * make - For building the project
-* Google Test - For running the testing programs that are not for assignment submissions
+* (for automated tests) Google Test - For running the testing programs that are not for assignment submissions
+
+## How to build and run
+To build use ```make all```. The program will be outputted to ```bin/app```. You can execute the application with ```./bin/app```.
