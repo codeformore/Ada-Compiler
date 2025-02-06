@@ -42,7 +42,7 @@ const std::map<std::string, TokenT> KEYWORDS = {
 };
 
 const std::map<TokenT, std::string> TOKEN_NAMES = {
-    {begint, "begint"}, {modulet, "modulet"}, {constt, "constantt"}, {proct, "proct"}, {ist, "ist"},
+    {begint, "begint"}, {modulet, "modulet"}, {constt, "constt"}, {proct, "proct"}, {ist, "ist"},
     {ift, "ift"}, {thent, "thent"}, {elset, "elset"}, {elseift, "elseift"}, {whilet, "whilet"},
     {loopt, "loopt"}, {floatt, "floatt"}, {integert, "integert"}, {chart, "chart"}, {gett, "gett"},
     {putt, "putt"}, {endt, "endt"}, {lpart, "lpart"}, {rpart, "rpart"}, {commat, "commat"},

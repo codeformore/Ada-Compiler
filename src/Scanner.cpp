@@ -36,13 +36,13 @@ Scanner::Scanner(std::string fileName)
 
     //Move to the first non-blank character
     inFile.get(currentChar);
-    while (currentChar != std::char_traits<char>::eof() && isblank(currentChar))
+    while (!inFile.eof() && isblank(currentChar))
     {
         inFile.get(currentChar);
     }
 
     //If we have the eof char, then we should throw
-    if (currentChar == std::char_traits<char>::eof())
+    if (inFile.eof())
     {
         throw std::runtime_error(fileName + " is empty.");
     }
@@ -61,15 +61,16 @@ Scanner::~Scanner()
 void Scanner::GetNextToken()
 {
     //Read until eof reached or blank 
-    while (currentChar != std::char_traits<char>::eof() && isspace(currentChar))
+    while (!inFile.eof() && isspace(currentChar))
     {
         inFile.get(currentChar);
     }
 
     //If we have the eof char, return the eoft token. Otherwise, start processToken
-    if (currentChar == std::char_traits<char>::eof())
+    if (inFile.eof())
     {
         Token = eoft;
+        Lexeme = "";
     }
     else
     {
@@ -197,7 +198,7 @@ void Scanner::readWord()
 
     //Grab chars until we get something besides letters, numbers, and underscores
     inFile.get(currentChar);
-    while (currentChar != std::char_traits<char>::eof() && 
+    while (!inFile.eof() && 
            (isalnum(currentChar) || currentChar == '_'))
     {
         Lexeme.push_back(currentChar);
@@ -213,7 +214,7 @@ void Scanner::readNum()
 
     //Grab chars until we don't have a digit
     inFile.get(currentChar);
-    while (currentChar != std::char_traits<char>::eof() && isdigit(currentChar))
+    while (!inFile.eof() && isdigit(currentChar))
     {
         Lexeme.push_back(currentChar);
         inFile.get(currentChar);
@@ -227,7 +228,7 @@ void Scanner::readNum()
 
         //Get the decimal part using same loop as the integral part
         inFile.get(currentChar);
-        while (currentChar != std::char_traits<char>::eof() && isdigit(currentChar))
+        while (!inFile.eof() && isdigit(currentChar))
         {
             Lexeme.push_back(currentChar);
             inFile.get(currentChar);
@@ -315,7 +316,7 @@ void Scanner::processComment()
 {
     //Grab characters until EOF or \n
     inFile.get(currentChar);
-    while (currentChar != std::char_traits<char>::eof() && currentChar != '\n')
+    while (!inFile.eof() && currentChar != '\n')
     {
         inFile.get(currentChar);
     }
@@ -337,7 +338,7 @@ void Scanner::processLiteral()
 
     //Grab characters until EOF, \n, or "
     inFile.get(currentChar);
-    while (currentChar != std::char_traits<char>::eof() && 
+    while (!inFile.eof() && 
            currentChar != '\n' && 
            currentChar != '"')
     {
@@ -346,7 +347,7 @@ void Scanner::processLiteral()
     }
 
     //If it is either \n or EOF, then we did not close the literal
-    if (currentChar == '\n' || currentChar == std::char_traits<char>::eof())
+    if (currentChar == '\n' || inFile.eof())
     {
         throw std::runtime_error("Unclosed String Literal");
     }
