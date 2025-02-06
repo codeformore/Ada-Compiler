@@ -73,6 +73,7 @@ public:
     int Value;
     float ValueR;
     std::string Literal;
+    int LineNum;
 
     Scanner(std::string fileName);
     ~Scanner();

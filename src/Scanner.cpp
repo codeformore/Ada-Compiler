@@ -19,7 +19,6 @@
 ********************************************************************/
 
 #include <Scanner.hpp>
-#include <iostream>
 #include <stdexcept>
 #include <algorithm>
 #include <cctype>
@@ -27,6 +26,9 @@
 
 Scanner::Scanner(std::string fileName)
 {
+    //Initialize lineNum
+    LineNum = 1;
+    
     //Open the file
     inFile.open(fileName);
     if (!inFile.is_open()) 
@@ -36,8 +38,12 @@ Scanner::Scanner(std::string fileName)
 
     //Move to the first non-blank character
     inFile.get(currentChar);
-    while (!inFile.eof() && isblank(currentChar))
+    while (!inFile.eof() && isspace(currentChar))
     {
+        if (currentChar == '\n')
+        {
+            LineNum++;
+        }
         inFile.get(currentChar);
     }
 
@@ -63,9 +69,12 @@ void Scanner::GetNextToken()
     //Read until eof reached or blank 
     while (!inFile.eof() && isspace(currentChar))
     {
+        if (currentChar == '\n')
+        {
+            LineNum++;
+        }
         inFile.get(currentChar);
     }
-
     //If we have the eof char, return the eoft token. Otherwise, start processToken
     if (inFile.eof())
     {
@@ -106,7 +115,7 @@ void Scanner::processToken()
             else
             {
                 processSingleToken();
-                inFile.get(currentChar);
+                currentChar = lookAheadChar;
             }
             break;
         
@@ -146,7 +155,7 @@ void Scanner::processWordToken()
     std::map<std::string, TokenT>::const_iterator it;
     for (it = KEYWORDS.begin(); it != KEYWORDS.end(); it++)
     {
-        if (it->first == lowerLexeme && isblank(currentChar))
+        if (it->first == lowerLexeme && isspace(currentChar))
         {
             Token = it->second;
             return;
@@ -324,6 +333,7 @@ void Scanner::processComment()
     //If it is a \n, then get the next character.
     if (currentChar == '\n')
     {
+        LineNum++;
         inFile.get(currentChar);
     }
 
