@@ -356,4 +356,7 @@ void Scanner::processLiteral()
     Lexeme.push_back('"');
     Lexeme.insert(Lexeme.begin(), '"');
     Token = strt;
+
+    //The current token is ", so move forward
+    inFile.get(currentChar);
 }
