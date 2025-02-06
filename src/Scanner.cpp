@@ -352,6 +352,8 @@ void Scanner::processLiteral()
     }
 
     //Otherwise, we have a literal.
-    Lexeme = Literal.substr(0, 17);
+    Lexeme = Literal.substr(0, 15);
+    Lexeme.push_back('"');
+    Lexeme.insert(Lexeme.begin(), '"');
     Token = strt;
 }
