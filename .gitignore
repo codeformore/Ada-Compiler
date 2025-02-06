@@ -1,6 +1,10 @@
 #Ignore vscode settings
 .vscode/
 
+#ignore bin and build
+bin/
+build/
+
 # Prerequisites
 *.d
 
