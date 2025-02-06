@@ -29,7 +29,7 @@ Scanner::Scanner(std::string fileName)
 {
     //Open the file
     inFile.open(fileName);
-    if (inFile.is_open()) 
+    if (!inFile.is_open()) 
     {
         throw std::runtime_error("Unable to open " + fileName + ".");
     }
