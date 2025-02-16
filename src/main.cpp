@@ -8,8 +8,25 @@
 ********************************************************************/
 
 #include <iostream>
+#include <RDP.hpp>
 
 int main(int argc, char* argv[])
 {
-    std::cout << "Hello World!" << std::endl;
+    if (argc != 2)
+    {
+        std::cout << "usage: " << argv[0] << " fileName" << std::endl;
+        return 1;
+    }
+
+    try
+    {
+        RDP rdp(argv[1]);
+        rdp.Parse();
+    }
+    catch(const std::runtime_error& e)
+    {
+        std::cerr << e.what() << std::endl;
+        return 1;
+    }
+    
 }
