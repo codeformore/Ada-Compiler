@@ -57,7 +57,6 @@ class Scanner
 private:
     char currentChar;
     char lookAheadChar;
-    std::string fileName;
     std::ifstream inFile;
 
     void processToken();
@@ -70,6 +69,7 @@ private:
     void processComment();
     void processLiteral();
 public:
+    std::string FileName;
     TokenT Token;
     std::string Lexeme;
     int Value;
