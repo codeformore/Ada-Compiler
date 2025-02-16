@@ -60,6 +60,10 @@ void RDP::declarativePart()
     if (scanner.Token == idt)
     {
         identifierList();
+        match(colont);
+        typeMark();
+        match(semit);
+        declarativePart();
     }
     //Otherwise, nullable
 }
