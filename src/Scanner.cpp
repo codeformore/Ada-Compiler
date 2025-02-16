@@ -155,7 +155,7 @@ void Scanner::processWordToken()
     std::map<std::string, TokenT>::const_iterator it;
     for (it = KEYWORDS.begin(); it != KEYWORDS.end(); it++)
     {
-        if (it->first == lowerLexeme && isspace(currentChar))
+        if (it->first == lowerLexeme)
         {
             Token = it->second;
             return;
@@ -237,6 +237,10 @@ void Scanner::readNum()
 
         //Get the decimal part using same loop as the integral part
         inFile.get(currentChar);
+        if (!isdigit(currentChar))
+        {
+            throw std::runtime_error("Number with period not followed by decimal part.");
+        }
         while (!inFile.eof() && isdigit(currentChar))
         {
             Lexeme.push_back(currentChar);
