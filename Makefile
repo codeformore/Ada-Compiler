@@ -13,18 +13,16 @@ TEST_DIR = tests
 # Files
 SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp)
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRC_FILES))
-TEST_FILES = $(wildcard $(TEST_DIR)/*.cpp)
-TEST_OBJ = $(patsubst $(TEST_DIR)/%.cpp, $(BUILD_DIR)/%.test.o, $(TEST_FILES))
 
 # Targets
-TARGET = $(BIN_DIR)/app
-TEST_TARGET = $(BIN_DIR)/run_tests
+APP = $(BIN_DIR)/app
+TESTS = $(BIN_DIR)/testScanner
 
 # Default target
-all: $(TARGET)
+all: $(APP)
 
 # Build main application
-$(TARGET): $(OBJ_FILES)
+$(APP): $(OBJ_FILES)
 	@mkdir -p $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
@@ -33,18 +31,18 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Build and run tests
-test: $(TEST_TARGET)
-	./$(TEST_TARGET)
+# Build and run all tests
+test: $(TESTS)
 
-$(TEST_TARGET): $(OBJ_FILES) $(TEST_OBJ)
+# Definition of tests
+$(BIN_DIR)/testScanner: $(BUILD_DIR)/Scanner.o $(BUILD_DIR)/testScanner.test.o
 	@mkdir -p $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
-# Compile test files
-$(BUILD_DIR)/%.test.o: $(TEST_DIR)/%.cpp
+# Compile Test Object Files
+$(BUILD_DIR)/testScanner.test.o: $(TEST_DIR)/testScanner.cpp
 	@mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $^ -o $@
 
 # Clean
 clean:
