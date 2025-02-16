@@ -28,5 +28,7 @@ int main(int argc, char* argv[])
         std::cerr << e.what() << std::endl;
         return 1;
     }
+
+    std::cout << argv[1] << " is a valid program! Congratulations!!!" << std::endl;
     
 }
