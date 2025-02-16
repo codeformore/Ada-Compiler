@@ -184,7 +184,7 @@ void Scanner::processWordToken()
         else
         {
             Token = unknownt;
-            throw std::runtime_error("Identifier " + Lexeme + " too long");
+            throw std::runtime_error(FileName + ":" + std::to_string(LineNum) + ": Identifier " + Lexeme + " too long");
         }
     }
 }
@@ -240,7 +240,7 @@ void Scanner::readNum()
         inFile.get(currentChar);
         if (!isdigit(currentChar))
         {
-            throw std::runtime_error("Number with period not followed by decimal part.");
+            throw std::runtime_error(FileName + ":" + std::to_string(LineNum) + ": Number with period not followed by decimal part.");
         }
         while (!inFile.eof() && isdigit(currentChar))
         {
@@ -285,7 +285,7 @@ void Scanner::processSingleToken()
     //If nothing matched, then we don't know the token.
     default:
         Token = unknownt;
-        throw std::runtime_error("Unknown Symbol " + currentChar);
+        throw std::runtime_error(FileName + ":" + std::to_string(LineNum) + ": Unknown Symbol " + currentChar);
         break;
     }
 }
@@ -364,7 +364,7 @@ void Scanner::processLiteral()
     //If it is either \n or EOF, then we did not close the literal
     if (currentChar == '\n' || inFile.eof())
     {
-        throw std::runtime_error("Unclosed String Literal");
+        throw std::runtime_error(FileName + ":" + std::to_string(LineNum) + ": Unclosed String Literal");
     }
 
     //Otherwise, we have a literal.

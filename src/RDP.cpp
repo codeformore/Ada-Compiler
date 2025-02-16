@@ -18,7 +18,7 @@ void RDP::Parse()
     prog();
     if (scanner.Token != eoft)
     {
-        throw std::runtime_error("Unused Tokens");
+        throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Unused Tokens");
     }
 }
 
@@ -32,7 +32,7 @@ void RDP::match(TokenT expected)
     }
     else
     {
-        throw std::runtime_error("Expected " + TOKEN_NAMES.at(expected) + ", but got " + TOKEN_NAMES.at(scanner.Token) + " instead.");
+        throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Expected " + TOKEN_NAMES.at(expected) + ", but got " + TOKEN_NAMES.at(scanner.Token) + " instead.");
     }
 }
 
@@ -110,7 +110,7 @@ void RDP::typeMark()
     
     //If we didn't find anything, then throw an error
     default:
-        throw std::runtime_error("Got " + TOKEN_NAMES.at(scanner.Token) + " but expected one of integert, floatt, chart, or constt.");
+        throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Got " + TOKEN_NAMES.at(scanner.Token) + " but expected one of integert, floatt, chart, or constt.");
         break;
     }
 }

@@ -107,7 +107,7 @@ TEST(ScannerE2E, edgeCases)
         catch( const std::runtime_error& e )
         {
             // and this tests that it has the correct message
-            EXPECT_STREQ("Identifier abcdefghijklmnopqr too long", e.what());
+            EXPECT_STREQ("tests/inputs/scannerEdgeCases.ada:4: Identifier abcdefghijklmnopqr too long", e.what());
             throw;
         }
     }, std::runtime_error);
@@ -120,7 +120,7 @@ TEST(ScannerE2E, edgeCases)
         catch( const std::runtime_error& e )
         {
             // and this tests that it has the correct message
-            EXPECT_STREQ("Number with period not followed by decimal part.", e.what());
+            EXPECT_STREQ("tests/inputs/scannerEdgeCases.ada:4: Number with period not followed by decimal part.", e.what());
             throw;
         }
     }, std::runtime_error);
