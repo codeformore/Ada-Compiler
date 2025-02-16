@@ -110,6 +110,8 @@ void RDP::typeMark()
     
     case constt:
         match(constt);
+        match(assignt);
+        value();
         break;
     
     //If we didn't find anything, then throw an error
