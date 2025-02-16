@@ -187,6 +187,9 @@ void RDP::mode()
     case inoutt:
         match(inoutt);
         break;
+    
+    default:
+        break;
     }
     //Otherwise, nullable
 }
