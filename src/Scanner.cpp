@@ -30,6 +30,7 @@ Scanner::Scanner(std::string fileName)
     LineNum = 1;
     
     //Open the file
+    this->fileName = fileName;
     inFile.open(fileName);
     if (!inFile.is_open()) 
     {
