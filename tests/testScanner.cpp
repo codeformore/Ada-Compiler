@@ -4,7 +4,7 @@
 TEST(ScannerE2E, tokenCoverage)
 {
     Scanner scanner("tests/inputs/scannerTokenCoverage.ada");
-    for (int tok = 0; tok <= 41; tok++)
+    for (int tok = 0; tok <= 44; tok++)
     {
         scanner.GetNextToken();
         // std::cout << tok << ": " << scanner.Lexeme << std::endl;
@@ -12,36 +12,36 @@ TEST(ScannerE2E, tokenCoverage)
         //Check token attributes if there are any
         if ((TokenT)tok == numt)
         {
-            ASSERT_FLOAT_EQ(scanner.ValueR, 3.25f);
-            ASSERT_EQ(scanner.Value, 3);
+            EXPECT_FLOAT_EQ(scanner.ValueR, 3.25f);
+            EXPECT_EQ(scanner.Value, 3);
         }
         else if ((TokenT)tok == strt)
         {
-            ASSERT_STREQ(scanner.Literal.c_str(), "Hello World!");
+            EXPECT_STREQ(scanner.Literal.c_str(), "Hello World!");
         }
 
         if (tok >= relopt)
         {
-            if (tok <= 30)
+            if (tok <= 33)
             {
-                ASSERT_EQ(scanner.Token, relopt);
+                EXPECT_EQ(scanner.Token, relopt);
             }
-            else if (tok <= 33)
+            else if (tok <= 36)
             {
-                ASSERT_EQ(scanner.Token, addopt);
+                EXPECT_EQ(scanner.Token, addopt);
             }
-            else if (tok <= 38)
+            else if (tok <= 41)
             {
-                ASSERT_EQ(scanner.Token, mulopt);
+                EXPECT_EQ(scanner.Token, mulopt);
             }
             else
             {
-                ASSERT_EQ(scanner.Token, (TokenT)(tok-11));
+                EXPECT_EQ(scanner.Token, (TokenT)(tok-11));
             }
         }
         else
         {
-            ASSERT_EQ(scanner.Token, (TokenT)tok);
+            EXPECT_EQ(scanner.Token, (TokenT)tok);
         }
     }
 }
