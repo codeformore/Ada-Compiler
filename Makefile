@@ -16,7 +16,7 @@ OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRC_FILES))
 
 # Targets
 APP = $(BIN_DIR)/app
-TESTS = $(BIN_DIR)/testScanner
+TESTS = $(BIN_DIR)/testScanner $(BIN_DIR)/testRDP
 
 # Default target
 all: $(APP)
@@ -39,8 +39,16 @@ $(BIN_DIR)/testScanner: $(BUILD_DIR)/Scanner.o $(BUILD_DIR)/testScanner.test.o
 	@mkdir -p $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
+$(BIN_DIR)/testRDP: $(BUILD_DIR)/Scanner.o $(BUILD_DIR)/RDP.o $(BUILD_DIR)/testRDP.test.o
+	@mkdir -p $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+
 # Compile Test Object Files
 $(BUILD_DIR)/testScanner.test.o: $(TEST_DIR)/testScanner.cpp
+	@mkdir -p $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -c $^ -o $@
+
+$(BUILD_DIR)/testRDP.test.o: $(TEST_DIR)/testRDP.cpp
 	@mkdir -p $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c $^ -o $@
 
