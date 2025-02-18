@@ -33,6 +33,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 # Build and run all tests
 test: $(TESTS)
+	@./tests/runAllTests.sh
 
 # Definition of tests
 $(BIN_DIR)/testScanner: $(BUILD_DIR)/Scanner.o $(BUILD_DIR)/testScanner.test.o
