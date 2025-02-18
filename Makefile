@@ -1,7 +1,19 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Iinclude
+CXXFLAGS := -Wall -Iinclude
 LDFLAGS = -lgtest -lgtest_main -pthread
+
+#Conditional compiler flags
+BUILD ?= assignment
+ifeq ($(BUILD),debug)
+  CXXFLAGS += -g --std=c++17
+else ifeq ($(BUILD),release)
+  CXXFLAGS += --std=c++17
+else ifeq ($(BUILD),assignment)
+  CXXFLAGS += --std=c++11
+else
+  $(error Error: Please specify a build mode using 'make BUILD=debug' from debug,release,assignment)
+endif
 
 # Directories
 SRC_DIR = src
