@@ -75,3 +75,14 @@ void SymTbl::Insert(std::string lex, TokenT token, int depth)
     newEntry->next = entries[key];
     entries[key] = newEntry;
 }
+
+SymTblEntry* SymTbl::Lookup(std::string lex)
+{
+    int key = hash(lex);
+    SymTblEntry* top = entries[key];
+    while (top != nullptr && top->lexeme != lex)
+    {
+        top = top->next;
+    }
+    return top;
+}
