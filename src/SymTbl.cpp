@@ -139,3 +139,15 @@ void ProcEntry::AddParam(VarType type, ParamMode mode)
     newParam->next = params;
     params = newParam;
 }
+
+ProcEntry::~ProcEntry()
+{
+    printf("ProcEntry Destructor\n");
+    Param* tmp;
+    while (params != nullptr)
+    {
+        tmp = params;
+        params = params->next;
+        delete tmp;
+    }
+}
