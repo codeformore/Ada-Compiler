@@ -65,3 +65,13 @@ int SymTbl::hash(std::string lex)
     return h % TBL_SIZE;
 }
 
+void SymTbl::Insert(std::string lex, TokenT token, int depth)
+{
+    int key = hash(lex);
+    SymTblEntry* newEntry = new SymTblEntry;
+    newEntry->lexeme = lex;
+    newEntry->token = token;
+    newEntry->depth = depth;
+    newEntry->next = entries[key];
+    entries[key] = newEntry;
+}
