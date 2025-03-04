@@ -103,3 +103,11 @@ void SymTbl::WriteTable(int depth)
         }
     }
 }
+
+SymTbl::SymTbl()
+{
+    for (int i = 0; i < TBL_SIZE; i++)
+    {
+        entries[i] = nullptr;
+    }
+}
