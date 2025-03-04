@@ -130,3 +130,12 @@ SymTbl::~SymTbl()
         }
     }
 }
+
+void ProcEntry::AddParam(VarType type, ParamMode mode)
+{
+    Param* newParam = new Param;
+    newParam->type = type;
+    newParam->mode = mode;
+    newParam->next = params;
+    params = newParam;
+}
