@@ -111,3 +111,22 @@ SymTbl::SymTbl()
         entries[i] = nullptr;
     }
 }
+
+SymTbl::~SymTbl()
+{
+    printf("SymTbl Destructor\n");
+    SymTblEntry* tmp;
+    for (int i = 0; i < TBL_SIZE; i++)
+    {
+        while (entries[i] != nullptr)
+        {
+            tmp = entries[i];
+            entries[i] = entries[i]->next;
+            if (tmp->entryType == Procedure)
+            {
+                tmp->procedure.~ProcEntry();
+            }
+            delete tmp;
+        }
+    }
+}
