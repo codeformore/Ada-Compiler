@@ -86,3 +86,20 @@ SymTblEntry* SymTbl::Lookup(std::string lex)
     }
     return top;
 }
+
+void SymTbl::WriteTable(int depth)
+{
+    SymTblEntry* top;
+    for (int i = 0; i < TBL_SIZE; i++)
+    {
+        top = entries[i];
+        while (top != nullptr)
+        {
+            if (top->depth == depth)
+            {
+                printf("%s\n", top->lexeme.c_str());
+            }
+            top = top->next;
+        }
+    }
+}
