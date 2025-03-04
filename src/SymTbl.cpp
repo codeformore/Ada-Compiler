@@ -87,6 +87,25 @@ SymTblEntry* SymTbl::Lookup(std::string lex)
     return top;
 }
 
+//Assuming depth is always the greatest value of depth in the SymTbl
+void SymTbl::DeleteDepth(int depth)
+{
+    SymTblEntry *tmp;
+    for (int i = 0; i < TBL_SIZE; i++)
+    {
+        while (entries[i] != nullptr && entries[i]->depth == depth)
+        {
+            tmp = entries[i];
+            entries[i] = entries[i]->next;
+            if (tmp->entryType == Procedure)
+            {
+                tmp->procedure.~ProcEntry();
+            }
+            delete tmp;
+        }
+    }
+}
+
 void SymTbl::WriteTable(int depth)
 {
     SymTblEntry* top;
