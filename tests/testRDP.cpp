@@ -19,7 +19,8 @@ TEST_P(RDPE2EValid, validProg)
 
 INSTANTIATE_TEST_SUITE_P(validProgs, RDPE2EValid,
     testing::Values("tests/inputs/validProg1.ada", "tests/inputs/validProg2.ada", 
-                    "tests/inputs/validProg3.ada", "tests/inputs/validProg4.ada"));
+                    "tests/inputs/validProg3.ada", "tests/inputs/validProg4.ada",
+                    "tests/inputs/validProg5.ada"));
 
 class RDPE2EInvalid : public testing::TestWithParam<std::tuple<std::string, std::string>> 
 {
