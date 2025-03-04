@@ -10,7 +10,7 @@ ifeq ($(BUILD),debug)
 else ifeq ($(BUILD),release)
   CXXFLAGS += --std=c++17
 else ifeq ($(BUILD),assignment)
-  CXXFLAGS += --std=c++11
+  CXXFLAGS += --std=c++14
 else
   $(error Error: Please specify a build mode using 'make BUILD=debug' from debug,release,assignment)
 endif
