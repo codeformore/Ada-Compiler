@@ -88,7 +88,7 @@ TEST(ScannerE2E, edgeCases)
     Scanner scanner(FILE_PATH);
 
     scanner.GetNextToken(); //Get float
-    EXPECT_EQ(scanner.Token, floatt);
+    EXPECT_EQ(scanner.Token, realt);
 
     scanner.GetNextToken(); //Get period
     EXPECT_EQ(scanner.Token, periodt);

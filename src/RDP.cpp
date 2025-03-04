@@ -90,7 +90,7 @@ void RDP::moreIdentifiers()
 }
 
 //Implements:
-// TypeMark -> integert | floatt | chart | constt assignt Value
+// TypeMark -> integert | realt | chart | constt assignt Value
 void RDP::typeMark()
 {
     //Check each case
@@ -100,8 +100,8 @@ void RDP::typeMark()
         match(integert);
         break;
     
-    case floatt:
-        match(floatt);
+    case realt:
+        match(realt);
         break;
     
     case chart:
@@ -116,7 +116,7 @@ void RDP::typeMark()
     
     //If we didn't find anything, then throw an error
     default:
-        throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Got " + TOKEN_NAMES.at(scanner.Token) + " but expected one of integert, floatt, chart, or constt.");
+        throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Got " + TOKEN_NAMES.at(scanner.Token) + " but expected one of integert, realt, chart, or constt.");
         break;
     }
 }
