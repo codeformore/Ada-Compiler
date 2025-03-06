@@ -30,9 +30,9 @@ protected:
         cur->procedure.size = 4;
     }
 
-    // void TearDown() override {
-    //     symTbl = TestableSymTbl();
-    // }
+    void TearDown() override {
+        symTbl = TestableSymTbl();
+    }
 };
 
 TEST_F(SymTblTest, testHash)
@@ -52,6 +52,22 @@ TEST_F(SymTblTest, testLookup)
     EXPECT_EQ(cur->procedure.params->type, IntVar);
     EXPECT_EQ(cur->procedure.params->next->mode, InoutMode);
     EXPECT_EQ(cur->procedure.params->next->type, CharVar); 
+}
+
+TEST_F(SymTblTest, testInsert)
+{
+    symTbl.Insert("second", idt, 2);
+    SymTblEntry* cur = symTbl.Lookup("second");
+    EXPECT_STREQ(cur->lexeme.c_str(), "second");
+    EXPECT_EQ(cur->token, idt);
+    EXPECT_EQ(cur->depth, 2);
+}
+
+TEST_F(SymTblTest, testDelete)
+{
+    symTbl.DeleteDepth(2);
+    SymTblEntry* cur = symTbl.Lookup("first");
+    EXPECT_EQ(cur->depth, 1);
 }
 
 int main(int argc, char **argv) {
