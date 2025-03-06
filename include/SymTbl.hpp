@@ -83,9 +83,8 @@ struct ProcEntry
 {
     int size;
     int numParams;
-    Param* params;
+    Param* params = nullptr;
     void AddParam(VarType type, ParamMode mode);
-    ~ProcEntry();
 };
 
 struct SymTblEntry
@@ -93,7 +92,7 @@ struct SymTblEntry
     TokenT token;
     std::string lexeme;
     int depth;
-    SymTblEntry* next;
+    SymTblEntry* next = nullptr;
     EntryType entryType;
     union
     {
@@ -101,12 +100,12 @@ struct SymTblEntry
         ConstEntry constant;
         ProcEntry procedure;
     };
-    ~SymTblEntry() { printf("SymTblEntry Destructor\n"); };
+    SymTblEntry() : entryType(Variable), variable{} {}
 };
 
 class SymTbl
 {
-private:
+protected:
     SymTblEntry* entries[TBL_SIZE];
     int hash(std::string lex);
 public:

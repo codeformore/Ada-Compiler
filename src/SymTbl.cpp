@@ -48,18 +48,15 @@
 //  "hello" -> 202
 int SymTbl::hash(std::string lex)
 {
-    char *s;
-    s = new char[lex.length()];
-    strncpy(s, lex.c_str(), lex.length());
     int h = 0, g;
-    for (int i = 0; i < (int)lex.length(); i++)
+    for (size_t i = 0; i < lex.length(); i++)
     {
-        h = (h << 24) + s[i];
+        h = (h << 24) + static_cast<unsigned char>(lex[i]);
         g = h & 0xf0000000;
         if (g != 0)
         {
-            h = h ^ (g >> 24);
-            h = h ^ g;
+            h ^= (g >> 24);
+            h ^= g;
         }
     }
     return h % TBL_SIZE;
@@ -133,7 +130,6 @@ SymTbl::SymTbl()
 
 SymTbl::~SymTbl()
 {
-    printf("SymTbl Destructor\n");
     SymTblEntry* tmp;
     for (int i = 0; i < TBL_SIZE; i++)
     {
@@ -143,7 +139,13 @@ SymTbl::~SymTbl()
             entries[i] = entries[i]->next;
             if (tmp->entryType == Procedure)
             {
-                tmp->procedure.~ProcEntry();
+                Param* tmpParam;
+                while (tmp->procedure.params != nullptr)
+                {
+                    tmpParam = tmp->procedure.params;
+                    tmp->procedure.params = tmp->procedure.params->next;
+                    delete tmpParam;
+                }
             }
             delete tmp;
         }
@@ -157,16 +159,4 @@ void ProcEntry::AddParam(VarType type, ParamMode mode)
     newParam->mode = mode;
     newParam->next = params;
     params = newParam;
-}
-
-ProcEntry::~ProcEntry()
-{
-    printf("ProcEntry Destructor\n");
-    Param* tmp;
-    while (params != nullptr)
-    {
-        tmp = params;
-        params = params->next;
-        delete tmp;
-    }
 }
