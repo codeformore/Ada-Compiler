@@ -40,7 +40,8 @@
 ********************************************************************/
 
 #include <SymTbl.hpp>
-#include <cstring>
+#include <iostream>
+#include <iomanip>
 
 //hashpjw from P. J. Weinberger's C compiler
 //Some Test Values: 
@@ -105,6 +106,14 @@ void SymTbl::DeleteDepth(int depth)
 
 void SymTbl::WriteTable(int depth)
 {
+    std::cout << std::right <<std::setfill('=') << std::setw(27) << "Depth " << depth 
+              << std::setw(20) << "" << std::setfill(' ') << std::endl
+              << std::left << std::setw(15) << "Lexeme" << "|"
+              << std::setw(15) << "Token" << "|"
+              << std::setw(5) << "Depth" << "|"
+              << std::setw(10) << "Entry Type" << std::endl
+              << std::setfill('-') << std::setw(48) << "" << std::setfill(' ') << std::endl;
+
     SymTblEntry* top;
     for (int i = 0; i < TBL_SIZE; i++)
     {
@@ -113,11 +122,52 @@ void SymTbl::WriteTable(int depth)
         {
             if (top->depth == depth)
             {
-                printf("%s\n", top->lexeme.c_str());
+                std::cout << std::left << std::setw(15) << top->lexeme << "|"
+                          << std::setw(15) << TOKEN_NAMES.at(top->token) << "|"
+                          << std::setw(5) << top->depth << "|"
+                          << std::setw(10) << ENTRYTYPE_NAMES.at(top->entryType);
+                
+                if (top->entryType == Variable)
+                {
+                    std::cout << "Offset: " << top->variable.offset 
+                              << " Size: " << top->variable.size 
+                              << " Type: " << VARTYPE_NAMES.at(top->variable.type) 
+                              << std::endl;
+                }
+                else if (top->entryType == Constant)
+                {
+                    std::cout << "Type: " << CONSTTYPE_NAMES.at(top->constant.type)
+                              << " Value: " << top->constant.value
+                              << " ValueR: " << top->constant.valueR
+                              << std::endl;
+                }
+                else
+                {
+                    std::cout << "Size: " << top->procedure.size
+                              << " NumParams: " << top->procedure.numParams
+                              << std::endl;
+                    Param* tmp = top->procedure.params;
+                    if (tmp == nullptr)
+                    {
+                        std::cout << "    No Parameters" << std::endl;
+                    }
+                    else
+                    {
+                        int paramNum = 0;
+                        while (tmp != nullptr)
+                        {
+                            std::cout << "    " << paramNum << ": " << PARAMMODE_NAMES.at(tmp->mode) 
+                                      << " - " << VARTYPE_NAMES.at(tmp->type) << std::endl;
+                            tmp = tmp->next;
+                            paramNum++;
+                        }
+                    }
+                }
             }
             top = top->next;
         }
     }
+    std::cout << std::endl;
 }
 
 SymTbl::SymTbl()
