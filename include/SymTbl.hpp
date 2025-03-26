@@ -44,16 +44,41 @@
 
 #include <Scanner.hpp>
 #include <string>
+#include <map>
 
 const int TBL_SIZE = 211;
 
 enum EntryType { Variable, Constant, Procedure };
+const std::map<EntryType, std::string> ENTRYTYPE_NAMES = {
+    {Variable, "Variable"}, {Constant, "Constant"}, {Procedure, "Procedure"}
+};
 
 enum VarType { IntVar, RealVar, CharVar };
+const std::map<VarType, std::string> VARTYPE_NAMES = {
+    {IntVar, "IntVar"}, {RealVar, "RealVar"}, {CharVar, "CharVar"}
+};
 
 enum ConstType { IntConst, RealConst };
+const std::map<ConstType, std::string> CONSTTYPE_NAMES = {
+    {IntConst, "IntConst"}, {RealConst, "RealConst"}
+};
 
 enum ParamMode { InMode, OutMode, InoutMode };
+const std::map<ParamMode, std::string> PARAMMODE_NAMES = {
+    {InMode, "InMode"}, {OutMode, "OutMode"}, {InoutMode, "InoutMode"}
+};
+
+union VarConstType
+{
+    VarType varType;
+    ConstType constType;
+};
+
+struct IdList
+{
+    std::string id;
+    IdList* next;
+};
 
 struct Param
 {
