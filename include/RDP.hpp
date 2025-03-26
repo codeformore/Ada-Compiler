@@ -14,25 +14,41 @@
 #define RDP_HPP
 
 #include <Scanner.hpp>
+#include <SymTbl.hpp>
 
 class RDP
 {
 private:
     Scanner scanner;
+    SymTbl symTbl;
+    int depth = 0;
 
     void match(TokenT expected);
+
+    //RDP Parsing
     void prog();
-    void declarativePart();
-    void identifierList();
-    void moreIdentifiers();
-    void typeMark();
-    void value();
+    void declarativePart(int & size);
+    void identifierList(IdList* & idList);
+    void moreIdentifiers(IdList* & idList);
+    void typeMark(bool & constType, VarConstType & theType, int & value, float & valueR);
+    void value(VarConstType theType, int & value, float & valueR);
     void procedures();
-    void args();
-    void argList();
-    void moreArgs();
-    void mode();
+    void args(Param* & paramList);
+    void argList(Param* & paramList);
+    void moreArgs(Param* & paramList);
+    void mode(ParamMode & mode);
     void seqOfStatements();
+
+    //Actions
+    void a1_CheckDup(std::string lexeme);
+    SymTblEntry* a2_InsertProc(std::string lexeme, TokenT token);
+    void a3_AssignArgListToProc(Param* start, SymTblEntry* entry);
+    void a4_CheckClosingID(std::string lexeme, std::string procName);
+    void a5_InsertVarsAndConsts(int & curSize, IdList* idList, bool isConst, VarConstType type, int value, float valueR);
+    void a6_AddModeAndType(Param* & cur, ParamMode mode, VarType varType, IdList* idList);
+    void a7_DeleteScope();
+    void a8_AddIDToList(IdList* & idList, std::string idToAdd);
+    void a9_DeallocateIdentiferList(IdList* & idList);
 public:
     void Parse();
     RDP(std::string fileName);
