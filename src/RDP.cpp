@@ -160,7 +160,7 @@ void RDP::typeMark(bool & constType, VarConstType & theType, int & value, float 
 
 //Implements:
 // Value -> numt
-void RDP::value(VarConstType theType, int & value, float & valueR)
+void RDP::value(VarConstType & theType, int & value, float & valueR)
 {
     value = scanner.Value;
     valueR = scanner.ValueR;

@@ -31,7 +31,7 @@ private:
     void identifierList(IdList* & idList);
     void moreIdentifiers(IdList* & idList);
     void typeMark(bool & constType, VarConstType & theType, int & value, float & valueR);
-    void value(VarConstType theType, int & value, float & valueR);
+    void value(VarConstType & theType, int & value, float & valueR);
     void procedures();
     void args(Param* & paramList);
     void argList(Param* & paramList);

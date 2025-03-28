@@ -136,10 +136,15 @@ void SymTbl::WriteTable(int depth)
                 }
                 else if (top->entryType == Constant)
                 {
-                    std::cout << "Type: " << CONSTTYPE_NAMES.at(top->constant.type)
-                              << " Value: " << top->constant.value
-                              << " ValueR: " << top->constant.valueR
-                              << std::endl;
+                    std::cout << "Type: " << CONSTTYPE_NAMES.at(top->constant.type);
+                    if (top->constant.type == RealConst)
+                    {
+                        std::cout << " ValueR: " << top->constant.valueR << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << "Value: " << top->constant.value << std::endl;
+                    }
                 }
                 else
                 {
