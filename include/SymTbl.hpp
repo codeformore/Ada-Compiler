@@ -77,14 +77,14 @@ union VarConstType
 struct IdList
 {
     std::string id;
-    IdList* next;
+    IdList* next = nullptr;
 };
 
 struct Param
 {
     VarType type;
     ParamMode mode;
-    Param* next;
+    Param* next = nullptr;
 };
 
 struct VarEntry
