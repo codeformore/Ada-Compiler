@@ -52,7 +52,7 @@ $(BIN_DIR)/testScanner: $(BUILD_DIR)/Scanner.o $(BUILD_DIR)/testScanner.test.o
 	@mkdir -p $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
-$(BIN_DIR)/testRDP: $(BUILD_DIR)/Scanner.o $(BUILD_DIR)/RDP.o $(BUILD_DIR)/testRDP.test.o
+$(BIN_DIR)/testRDP: $(BUILD_DIR)/Scanner.o $(BUILD_DIR)/RDP.o $(BUILD_DIR)/SymTbl.o $(BUILD_DIR)/testRDP.test.o
 	@mkdir -p $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 

@@ -18,9 +18,9 @@ TEST_P(RDPE2EValid, validProg)
 }
 
 INSTANTIATE_TEST_SUITE_P(validProgs, RDPE2EValid,
-    testing::Values("tests/inputs/validProg1.ada", "tests/inputs/validProg2.ada", 
-                    "tests/inputs/validProg3.ada", "tests/inputs/validProg4.ada",
-                    "tests/inputs/validProg5.ada"));
+    testing::Values("tests/inputs/procSyntax/validProg1.ada", "tests/inputs/procSyntax/validProg2.ada", 
+                    "tests/inputs/procSyntax/validProg3.ada", "tests/inputs/procSyntax/validProg4.ada",
+                    "tests/inputs/procSyntax/validProg5.ada"));
 
 class RDPE2EInvalid : public testing::TestWithParam<std::tuple<std::string, std::string>> 
 {
@@ -47,8 +47,8 @@ TEST_P(RDPE2EInvalid, invalidProg)
 }
 
 INSTANTIATE_TEST_SUITE_P(invalidProgs, RDPE2EInvalid,
-    testing::Values(std::make_tuple("tests/inputs/invalidProg1.ada", "tests/inputs/invalidProg1.ada:5: Unused Tokens"),
-                    std::make_tuple("tests/inputs/invalidProg2.ada", "tests/inputs/invalidProg2.ada:7: Expected colont, but got endt instead."))
+    testing::Values(std::make_tuple("tests/inputs/procSyntax/invalidProg1.ada", "tests/inputs/procSyntax/invalidProg1.ada:5: Unused Tokens"),
+                    std::make_tuple("tests/inputs/procSyntax/invalidProg2.ada", "tests/inputs/procSyntax/invalidProg2.ada:7: Expected colont, but got endt instead."))
 );
 
 int main(int argc, char **argv) {
