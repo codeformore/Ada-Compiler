@@ -3,7 +3,7 @@
 
 TEST(ScannerE2E, tokenCoverage)
 {
-    Scanner scanner("tests/inputs/scannerTokenCoverage.ada");
+    Scanner scanner("tests/inputs/scanner/scannerTokenCoverage.ada");
     for (int tok = 0; tok <= 44; tok++)
     {
         scanner.GetNextToken();
@@ -66,7 +66,7 @@ TEST(ScannerE2E, fakeInputFile)
 
 TEST(ScannerE2E, emptyInputFile)
 {
-    const std::string FILE_PATH = "tests/inputs/empty.ada";
+    const std::string FILE_PATH = "tests/inputs/scanner/empty.ada";
     const std::string ERROR_STRING = FILE_PATH + " is empty.";
     EXPECT_THROW({
         try
@@ -84,7 +84,7 @@ TEST(ScannerE2E, emptyInputFile)
 
 TEST(ScannerE2E, edgeCases)
 {
-    const std::string FILE_PATH = "tests/inputs/scannerEdgeCases.ada";
+    const std::string FILE_PATH = "tests/inputs/scanner/scannerEdgeCases.ada";
     Scanner scanner(FILE_PATH);
 
     scanner.GetNextToken(); //Get float
@@ -107,7 +107,7 @@ TEST(ScannerE2E, edgeCases)
         catch( const std::runtime_error& e )
         {
             // and this tests that it has the correct message
-            EXPECT_STREQ("tests/inputs/scannerEdgeCases.ada:4: Identifier abcdefghijklmnopqr too long", e.what());
+            EXPECT_STREQ("tests/inputs/scanner/scannerEdgeCases.ada:4: Identifier abcdefghijklmnopqr too long", e.what());
             throw;
         }
     }, std::runtime_error);
@@ -120,7 +120,7 @@ TEST(ScannerE2E, edgeCases)
         catch( const std::runtime_error& e )
         {
             // and this tests that it has the correct message
-            EXPECT_STREQ("tests/inputs/scannerEdgeCases.ada:5: Number with period not followed by decimal part.", e.what());
+            EXPECT_STREQ("tests/inputs/scanner/scannerEdgeCases.ada:5: Number with period not followed by decimal part.", e.what());
             throw;
         }
     }, std::runtime_error);
