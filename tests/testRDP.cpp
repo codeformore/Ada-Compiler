@@ -20,7 +20,10 @@ TEST_P(RDPE2EValid, validProg)
 INSTANTIATE_TEST_SUITE_P(validProgs, RDPE2EValid,
     testing::Values("tests/inputs/procSyntax/validProg1.ada", "tests/inputs/procSyntax/validProg2.ada", 
                     "tests/inputs/procSyntax/validProg3.ada", "tests/inputs/procSyntax/validProg4.ada",
-                    "tests/inputs/procSyntax/validProg5.ada"));
+                    "tests/inputs/procSyntax/validProg5.ada", "tests/inputs/procSemantic/validProg1.ada",
+                    "tests/inputs/procSemantic/validProg2.ada", "tests/inputs/procSemantic/validProg3.ada",
+                    "tests/inputs/procSemantic/validProg4.ada"
+                   ));
 
 class RDPE2EInvalid : public testing::TestWithParam<std::tuple<std::string, std::string>> 
 {
@@ -48,7 +51,12 @@ TEST_P(RDPE2EInvalid, invalidProg)
 
 INSTANTIATE_TEST_SUITE_P(invalidProgs, RDPE2EInvalid,
     testing::Values(std::make_tuple("tests/inputs/procSyntax/invalidProg1.ada", "tests/inputs/procSyntax/invalidProg1.ada:5: Unused Tokens"),
-                    std::make_tuple("tests/inputs/procSyntax/invalidProg2.ada", "tests/inputs/procSyntax/invalidProg2.ada:7: Expected colont, but got endt instead."))
+                    std::make_tuple("tests/inputs/procSyntax/invalidProg2.ada", "tests/inputs/procSyntax/invalidProg2.ada:7: Expected colont, but got endt instead."),
+                    std::make_tuple("tests/inputs/procSemantic/invalidProg1.ada", "tests/inputs/procSemantic/invalidProg1.ada:6: sum is already defined."),
+                    std::make_tuple("tests/inputs/procSemantic/invalidProg2.ada", "tests/inputs/procSemantic/invalidProg2.ada:2: x is already defined."),
+                    std::make_tuple("tests/inputs/procSemantic/invalidProg3.ada", "tests/inputs/procSemantic/invalidProg3.ada:3: a is already defined."),
+                    std::make_tuple("tests/inputs/procSemantic/invalidProg4.ada", "tests/inputs/procSemantic/invalidProg4.ada:3: test9 did not match the procedure name test8.")
+                   )
 );
 
 int main(int argc, char **argv) {
