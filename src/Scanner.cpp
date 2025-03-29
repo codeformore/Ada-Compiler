@@ -173,6 +173,11 @@ void Scanner::processWordToken()
     {
         Token = mulopt;
     }
+    //If not, check if it is a not
+    else if (lowerLexeme == "not")
+    {
+        Token = nott;
+    }
     //Otherwise, it could be an identifier
     else
     {

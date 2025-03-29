@@ -31,7 +31,7 @@ enum TokenT
     elset, elseift, whilet, loopt, realt, integert, chart,
     gett, putt, endt, intok, outt, inoutt, lpart, rpart, commat, colont,
     idt, numt, strt, assignt, relopt, addopt, mulopt,
-    semit, periodt, eoft, unknownt
+    semit, periodt, eoft, unknownt, nott
 };
 
 const std::map<std::string, TokenT> KEYWORDS = {
@@ -49,7 +49,7 @@ const std::map<TokenT, std::string> TOKEN_NAMES = {
     {lpart, "lpart"}, {rpart, "rpart"}, {commat, "commat"},
     {colont, "colont"}, {idt, "idt"}, {numt, "numt"}, {strt, "strt"}, {assignt, "assignt"},
     {relopt, "relopt"}, {addopt, "addopt"}, {mulopt, "mulopt"}, {semit, "semit"}, {periodt, "periodt"}, 
-    {eoft, "eoft"}, {unknownt, "unknownt"}
+    {eoft, "eoft"}, {unknownt, "unknownt"}, {nott, "nott"}
 };
 
 class Scanner

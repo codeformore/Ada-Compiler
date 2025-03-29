@@ -4,7 +4,7 @@
 TEST(ScannerE2E, tokenCoverage)
 {
     Scanner scanner("tests/inputs/scanner/scannerTokenCoverage.ada");
-    for (int tok = 0; tok <= 44; tok++)
+    for (int tok = 0; tok <= 45; tok++)
     {
         scanner.GetNextToken();
         // std::cout << tok << ": " << scanner.Lexeme << std::endl;
@@ -33,6 +33,14 @@ TEST(ScannerE2E, tokenCoverage)
             else if (tok <= 41)
             {
                 EXPECT_EQ(scanner.Token, mulopt);
+            }
+            else if (tok == 44)
+            {
+                EXPECT_EQ(scanner.Token, nott);
+            }
+            else if (tok == 45)
+            {
+                EXPECT_EQ(scanner.Token, eoft);
             }
             else
             {
