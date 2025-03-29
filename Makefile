@@ -3,13 +3,12 @@ CXX = g++
 CXXFLAGS := -Wall -Iinclude
 LDFLAGS = -lgtest -lgtest_main -pthread
 
+#For Memory Leak Detection: -fsanitize=address
 #Conditional compiler flags
-BUILD ?= assignment
+BUILD ?= release
 ifeq ($(BUILD),debug)
-  CXXFLAGS += -g --std=c++17
+  CXXFLAGS += -g --std=c++14
 else ifeq ($(BUILD),release)
-  CXXFLAGS += --std=c++17
-else ifeq ($(BUILD),assignment)
   CXXFLAGS += --std=c++14
 else
   $(error Error: Please specify a build mode using 'make BUILD=debug' from debug,release,assignment)
