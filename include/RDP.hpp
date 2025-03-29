@@ -26,6 +26,7 @@ private:
     void match(TokenT expected);
 
     //RDP Parsing
+    //Proc Grammar
     void prog();
     void declarativePart(int & size);
     void identifierList(IdList* & idList);
@@ -38,6 +39,20 @@ private:
     void moreArgs(Param* & paramList);
     void mode(ParamMode & mode);
     void seqOfStatements();
+    
+    //Statement Grammar
+    void statTail();
+    void statement();
+    void assignStat();
+    void IOStat();
+    void expr();
+    void relation();
+    void simpleExpr();
+    void moreTerm();
+    void term();
+    void moreFactor();
+    void factor();
+
 
     //Actions
     void a1_CheckDup(std::string lexeme);
@@ -49,6 +64,7 @@ private:
     void a7_DeleteScope();
     void a8_AddIDToList(IdList* & idList, std::string idToAdd);
     void a9_DeallocateIdentiferList(IdList* & idList);
+    void a10_CheckDefined(std::string lexeme);
 public:
     void Parse();
     RDP(std::string fileName);

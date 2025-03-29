@@ -266,10 +266,152 @@ void RDP::mode(ParamMode & mode)
 }
 
 //Implements:
-// SeqOfStatements -> o
+// SeqOfStatements -> Statement semit StatTail | o
 void RDP::seqOfStatements()
 {
+    if (scanner.Token == idt || scanner.Token == semit)
+    {
+        statement();
+        match(semit);
+        statTail();
+    }
+    //Otherwise, nullable
+}
+
+//Implements:
+// StatTail -> Statement ; StatTail | o
+void RDP::statTail()
+{
+    if (scanner.Token == idt || scanner.Token == semit)
+    {
+        statement();
+        match(semit);
+        statTail();
+    }
+    //Otherwise, nullable
+}
+
+void RDP::statement()
+{
+    if (scanner.Token == idt)
+    {
+        assignStat();
+    }
+    else 
+    {
+        IOStat();
+    }
+}
+
+//Implements:
+// AssignStat -> {10} idt assignt Expr
+void RDP::assignStat()
+{
+    a10_CheckDefined(scanner.Lexeme);
+    match(idt);
+    match(assignt);
+    expr();
+}
+
+//Implements:
+// IOStat -> o
+void RDP::IOStat()
+{
     //Nullable
+}
+
+//Implements:
+// Expr -> Relation
+void RDP::expr()
+{
+    relation();
+}
+
+//Implements:
+// Relation -> SimpleExpr
+void RDP::relation()
+{
+    simpleExpr();
+}
+
+//Implements:
+// SimpleExpr -> Term MoreTerm
+void RDP::simpleExpr()
+{
+    term();
+    moreTerm();
+}
+
+//Implements:
+// MoreTerm -> addopt Term MoreTerm | o
+void RDP::moreTerm()
+{
+    if (scanner.Token == addopt)
+    {
+        match(addopt);
+        term();
+        moreTerm();
+    }
+    //Otherwise, nullable
+}
+
+//Implements:
+// Term -> Factor MoreFactor
+void RDP::term()
+{
+    factor();
+    moreFactor();
+}
+
+//Implements:
+// MoreFactor -> mulopt Factor MoreFactor | o
+void RDP::moreFactor()
+{
+    if (scanner.Token == mulopt)
+    {
+        match(mulopt);
+        factor();
+        moreFactor();
+    }
+    //Otherwise, nullable
+}
+
+void RDP::factor()
+{
+    switch (scanner.Token)
+    {
+    case idt:
+        a10_CheckDefined(scanner.Lexeme);
+        match(idt);
+        break;
+
+    case numt:
+        match(numt);
+        break;
+
+    case lpart:
+        match(lpart);
+        expr();
+        match(rpart);
+        break;
+    
+    case nott:
+        match(nott);
+        factor();
+        break;
+
+    case addopt:
+        if (scanner.Lexeme != "+" || scanner.Lexeme != "-")
+        {
+            throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": " + scanner.Lexeme + " is not allowed as a sign operator.");
+        }
+        match(addopt);
+        factor();
+    
+    default:
+        throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Got " + TOKEN_NAMES.at(scanner.Token) + ", but expected one of idt, numt, lpart, nott, addopt.");
+        break;
+    }
 }
 
 void RDP::a1_CheckDup(std::string lexeme)
@@ -413,5 +555,14 @@ void RDP::a9_DeallocateIdentiferList(IdList* & idList)
         tmp = idList;
         idList = idList->next;
         delete tmp;
+    }
+}
+
+void RDP::a10_CheckDefined(std::string lexeme)
+{
+    SymTblEntry* entry = symTbl.Lookup(lexeme);
+    if (entry == nullptr)
+    {
+        throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": " + lexeme + " is not defined.");
     }
 }
