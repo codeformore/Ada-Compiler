@@ -97,7 +97,13 @@ void SymTbl::DeleteDepth(int depth)
             entries[i] = entries[i]->next;
             if (tmp->entryType == Procedure)
             {
-                tmp->procedure.~ProcEntry();
+                Param* tmpParam;
+                while (tmp->procedure.params != nullptr)
+                {
+                    tmpParam = tmp->procedure.params;
+                    tmp->procedure.params = tmp->procedure.params->next;
+                    delete tmpParam;
+                }
             }
             delete tmp;
         }
