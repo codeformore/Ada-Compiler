@@ -22,7 +22,8 @@ INSTANTIATE_TEST_SUITE_P(validProgs, RDPE2EValid,
                     "tests/inputs/procSyntax/validProg3.ada", "tests/inputs/procSyntax/validProg4.ada",
                     "tests/inputs/procSyntax/validProg5.ada", "tests/inputs/procSemantic/validProg1.ada",
                     "tests/inputs/procSemantic/validProg2.ada", "tests/inputs/procSemantic/validProg3.ada",
-                    "tests/inputs/procSemantic/validProg4.ada"
+                    "tests/inputs/procSemantic/validProg4.ada", "tests/inputs/stmtSyntax/validProg1.ada",
+                    "tests/inputs/stmtSyntax/validProg2.ada", "tests/inputs/stmtSyntax/validProg3.ada"
                    ));
 
 class RDPE2EInvalid : public testing::TestWithParam<std::tuple<std::string, std::string>> 
@@ -55,7 +56,8 @@ INSTANTIATE_TEST_SUITE_P(invalidProgs, RDPE2EInvalid,
                     std::make_tuple("tests/inputs/procSemantic/invalidProg1.ada", "tests/inputs/procSemantic/invalidProg1.ada:6: sum is already defined."),
                     std::make_tuple("tests/inputs/procSemantic/invalidProg2.ada", "tests/inputs/procSemantic/invalidProg2.ada:2: x is already defined."),
                     std::make_tuple("tests/inputs/procSemantic/invalidProg3.ada", "tests/inputs/procSemantic/invalidProg3.ada:3: a is already defined."),
-                    std::make_tuple("tests/inputs/procSemantic/invalidProg4.ada", "tests/inputs/procSemantic/invalidProg4.ada:3: test9 did not match the procedure name test8.")
+                    std::make_tuple("tests/inputs/procSemantic/invalidProg4.ada", "tests/inputs/procSemantic/invalidProg4.ada:3: test9 did not match the procedure name test8."),
+                    std::make_tuple("tests/inputs/stmtSyntax/invalidProg1.ada", "tests/inputs/stmtSyntax/invalidProg1.ada:8: d is not defined.")
                    )
 );
 
