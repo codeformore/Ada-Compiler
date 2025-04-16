@@ -24,7 +24,7 @@ void RDP::Parse()
     }
 }
 
-RDP::RDP(std::string fileName) : scanner(fileName) {}
+RDP::RDP(std::string fileName) : scanner(fileName), codeGen(fileName) {}
 
 void RDP::match(TokenT expected)
 {

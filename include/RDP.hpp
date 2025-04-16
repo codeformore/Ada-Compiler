@@ -15,12 +15,14 @@
 
 #include <Scanner.hpp>
 #include <SymTbl.hpp>
+#include <TACGen.hpp>
 
 class RDP
 {
 private:
     Scanner scanner;
     SymTbl symTbl;
+    TACGen codeGen;
     int depth = 0;
 
     void match(TokenT expected);
