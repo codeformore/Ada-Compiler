@@ -21,4 +21,11 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 echo "===TEST 3 PASSED==="
+echo "===TEST 4: testTACGen==="
+./bin/testTACGen
+if [ $? -ne 0 ]; then
+    echo "===TEST 4 FAILED==="
+    exit 1
+fi
+echo "===TEST 4 PASSED==="
 echo "=====END TESTING====="

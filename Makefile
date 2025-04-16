@@ -27,7 +27,7 @@ OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRC_FILES))
 
 # Targets
 APP = $(BIN_DIR)/app
-TESTS = $(BIN_DIR)/testScanner $(BIN_DIR)/testRDP $(BIN_DIR)/testSymTbl
+TESTS = $(BIN_DIR)/testScanner $(BIN_DIR)/testRDP $(BIN_DIR)/testSymTbl $(BIN_DIR)/testTACGen
 
 # Default target
 all: $(APP)
@@ -51,11 +51,15 @@ $(BIN_DIR)/testScanner: $(BUILD_DIR)/Scanner.o $(BUILD_DIR)/testScanner.test.o
 	@mkdir -p $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
-$(BIN_DIR)/testRDP: $(BUILD_DIR)/Scanner.o $(BUILD_DIR)/RDP.o $(BUILD_DIR)/SymTbl.o $(BUILD_DIR)/testRDP.test.o
+$(BIN_DIR)/testRDP: $(BUILD_DIR)/Scanner.o $(BUILD_DIR)/RDP.o $(BUILD_DIR)/SymTbl.o $(BUILD_DIR)/TACGen.o $(BUILD_DIR)/testRDP.test.o
 	@mkdir -p $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
 $(BIN_DIR)/testSymTbl: $(BUILD_DIR)/SymTbl.o $(BUILD_DIR)/testSymTbl.test.o
+	@mkdir -p $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+
+$(BIN_DIR)/testTACGen: $(BUILD_DIR)/TACGen.o $(BUILD_DIR)/testTACGen.test.o
 	@mkdir -p $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
@@ -69,6 +73,10 @@ $(BUILD_DIR)/testRDP.test.o: $(TEST_DIR)/testRDP.cpp
 	$(CXX) $(CXXFLAGS) -c $^ -o $@
 
 $(BUILD_DIR)/testSymTbl.test.o: $(TEST_DIR)/testSymTbl.cpp
+	@mkdir -p $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -c $^ -o $@
+
+$(BUILD_DIR)/testTACGen.test.o: $(TEST_DIR)/testTACGen.cpp
 	@mkdir -p $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c $^ -o $@
 

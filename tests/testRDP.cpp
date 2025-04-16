@@ -12,9 +12,13 @@ protected:
 
 TEST_P(RDPE2EValid, validProg)
 {
-    EXPECT_NO_THROW({
+    ASSERT_NO_THROW({
         rdp.Parse();
     });
+
+    std::string fileName = GetParam();
+    fileName.replace(fileName.length() - 4, 4, ".tac");
+    std::remove(fileName.c_str());
 }
 
 INSTANTIATE_TEST_SUITE_P(validProgs, RDPE2EValid,
@@ -47,7 +51,10 @@ TEST_P(RDPE2EInvalid, invalidProg)
         catch( const std::runtime_error& e )
         {
             // and this tests that it has the correct message
-            EXPECT_STREQ(std::get<1>(GetParam()).c_str(), e.what());
+            ASSERT_STREQ(std::get<1>(GetParam()).c_str(), e.what());
+            std::string fileName = std::get<0>(GetParam());
+            fileName.replace(fileName.length() - 4, 4, ".tac");
+            std::remove(fileName.c_str());
             throw;
         }
     }, std::runtime_error);
