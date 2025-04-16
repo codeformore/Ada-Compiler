@@ -376,6 +376,8 @@ void RDP::moreFactor()
     //Otherwise, nullable
 }
 
+//Implements:
+// Factor -> idt | numt | lpart Expr rpart | nott Factor | signopt Factor
 void RDP::factor()
 {
     switch (scanner.Token)
@@ -401,12 +403,13 @@ void RDP::factor()
         break;
 
     case addopt:
-        if (scanner.Lexeme != "+" || scanner.Lexeme != "-")
+        if (scanner.Lexeme != "+" && scanner.Lexeme != "-")
         {
             throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": " + scanner.Lexeme + " is not allowed as a sign operator.");
         }
         match(addopt);
         factor();
+        break;
     
     default:
         throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Got " + TOKEN_NAMES.at(scanner.Token) + ", but expected one of idt, numt, lpart, nott, addopt.");
@@ -485,9 +488,11 @@ void RDP::a5_InsertVarsAndConsts(int &curSize, IdList *idList, bool isConst, Var
 
             case RealVar:
                 theNewEntry->variable.size = 4;
+                break;
             
             case CharVar:
                 theNewEntry->variable.size = 1;
+                break;
             }
             curSize += theNewEntry->variable.size;
         }
