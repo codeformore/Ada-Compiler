@@ -40,20 +40,20 @@ private:
     void argList(Param* & paramList);
     void moreArgs(Param* & paramList);
     void mode(ParamMode & mode);
-    void seqOfStatements();
+    void seqOfStatements(int & size);
     
     //Statement Grammar
-    void statTail();
-    void statement();
-    void assignStat();
+    void statTail(int & size);
+    void statement(int & size);
+    void assignStat(int & size);
     void IOStat();
-    void expr();
-    void relation();
-    void simpleExpr();
-    void moreTerm();
-    void term();
-    void moreFactor();
-    void factor();
+    void expr(int & size, TACArg & outArg);
+    void relation(int & size, TACArg & outArg);
+    void simpleExpr(int & size, TACArg & outArg);
+    void moreTerm(TACArg & inArg, int & size, TACArg & outArg);
+    void term(int & size, TACArg & outArg);
+    void moreFactor(TACArg inArg, int & size, TACArg & outArg);
+    void factor(int & size, TACArg & outArg);
 
 
     //Actions
@@ -67,6 +67,9 @@ private:
     void a8_AddIDToList(IdList* & idList, std::string idToAdd);
     void a9_DeallocateIdentiferList(IdList* & idList);
     void a10_CheckDefined(std::string lexeme);
+    void a11_CreateTACArg(std::string lexeme, TACArg & retTACArg);
+    void a12_GetBinaryOp(std::string opString, BinOp & op);
+    void a13_GetUnaryOp(std::string opString, UnOp & op);
 public:
     void Parse();
     RDP(std::string fileName);

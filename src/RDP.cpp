@@ -54,7 +54,7 @@ void RDP::prog()
     declarativePart(newEntry->procedure.size);
     procedures();
     match(begint);
-    seqOfStatements();
+    seqOfStatements(newEntry->procedure.size);
     symTbl.WriteTable(depth); //For Assignment 5
     a7_DeleteScope();
     match(endt);
@@ -267,35 +267,35 @@ void RDP::mode(ParamMode & mode)
 
 //Implements:
 // SeqOfStatements -> Statement semit StatTail | o
-void RDP::seqOfStatements()
+void RDP::seqOfStatements(int & size)
 {
     if (scanner.Token == idt || scanner.Token == semit)
     {
-        statement();
+        statement(size);
         match(semit);
-        statTail();
+        statTail(size);
     }
     //Otherwise, nullable
 }
 
 //Implements:
 // StatTail -> Statement ; StatTail | o
-void RDP::statTail()
+void RDP::statTail(int & size)
 {
     if (scanner.Token == idt || scanner.Token == semit)
     {
-        statement();
+        statement(size);
         match(semit);
-        statTail();
+        statTail(size);
     }
     //Otherwise, nullable
 }
 
-void RDP::statement()
+void RDP::statement(int & size)
 {
     if (scanner.Token == idt)
     {
-        assignStat();
+        assignStat(size);
     }
     else 
     {
@@ -305,12 +305,16 @@ void RDP::statement()
 
 //Implements:
 // AssignStat -> {10} idt assignt Expr
-void RDP::assignStat()
+void RDP::assignStat(int & size)
 {
+    TACArg idArg;
     a10_CheckDefined(scanner.Lexeme);
+    a11_CreateTACArg(scanner.Lexeme, idArg);
     match(idt);
     match(assignt);
-    expr();
+    TACArg exprArg;
+    expr(size, exprArg);
+    codeGen.EmitCopy(idArg, exprArg);
 }
 
 //Implements:
@@ -322,84 +326,125 @@ void RDP::IOStat()
 
 //Implements:
 // Expr -> Relation
-void RDP::expr()
+void RDP::expr(int & size, TACArg & outArg)
 {
-    relation();
+    relation(size, outArg);
 }
 
 //Implements:
 // Relation -> SimpleExpr
-void RDP::relation()
+void RDP::relation(int & size, TACArg & outArg)
 {
-    simpleExpr();
+    simpleExpr(size, outArg);
 }
 
 //Implements:
 // SimpleExpr -> Term MoreTerm
-void RDP::simpleExpr()
+void RDP::simpleExpr(int & size, TACArg & outArg)
 {
-    term();
-    moreTerm();
+    TACArg outTerm;
+    term(size, outTerm);
+    moreTerm(outTerm, size, outArg);
 }
 
 //Implements:
 // MoreTerm -> addopt Term MoreTerm | o
-void RDP::moreTerm()
+void RDP::moreTerm(TACArg & inArg, int & size, TACArg & outArg)
 {
     if (scanner.Token == addopt)
     {
+        //Get type of operation
+        BinOp theOp;
+        a12_GetBinaryOp(scanner.Lexeme, theOp);
         match(addopt);
-        term();
-        moreTerm();
+        TACArg outTerm;
+        term(size, outTerm);
+        //Create a new temp
+        std::string tempName = symTbl.CreateTemp(depth, size);
+        //Convert to TACArg
+        TACArg tempArg;
+        a11_CreateTACArg(tempName, tempArg);
+        //Emit operation
+        codeGen.EmitBinaryAssign(tempArg, inArg, outTerm, theOp);
+        //More terms
+        moreTerm(tempArg, size, outArg);
     }
     //Otherwise, nullable
+    else
+    {
+        outArg = inArg;
+    }
 }
 
 //Implements:
 // Term -> Factor MoreFactor
-void RDP::term()
+void RDP::term(int & size, TACArg & outArg)
 {
-    factor();
-    moreFactor();
+    TACArg inArg;
+    factor(size, inArg);
+    moreFactor(inArg, size, outArg);
 }
 
 //Implements:
 // MoreFactor -> mulopt Factor MoreFactor | o
-void RDP::moreFactor()
+void RDP::moreFactor(TACArg inArg, int & size, TACArg & outArg)
 {
     if (scanner.Token == mulopt)
     {
+        //Get the operation
+        BinOp theOp;
+        a12_GetBinaryOp(scanner.Lexeme, theOp);
         match(mulopt);
-        factor();
-        moreFactor();
+        //Get the second factor
+        TACArg outFactor;
+        factor(size, outFactor);
+        //Create a new temp
+        std::string tempName = symTbl.CreateTemp(depth, size);
+        //Convert to TACArg
+        TACArg tempArg;
+        a11_CreateTACArg(tempName, tempArg);
+        //Emit operation
+        codeGen.EmitBinaryAssign(tempArg, inArg, outFactor, theOp);
+        //More Factor
+        moreFactor(tempArg, size, outArg);
     }
     //Otherwise, nullable
+    else
+    {
+        outArg = inArg;
+    }
 }
 
 //Implements:
 // Factor -> idt | numt | lpart Expr rpart | nott Factor | signopt Factor
-void RDP::factor()
+void RDP::factor(int & size, TACArg & outArg)
 {
+    TACArg outFactor;
+    UnOp theOp;
+    std::string tempName;
     switch (scanner.Token)
     {
     case idt:
         a10_CheckDefined(scanner.Lexeme);
+        a11_CreateTACArg(scanner.Lexeme, outArg);
         match(idt);
         break;
 
     case numt:
+        outArg = TACArg(ConstTAC, scanner.Lexeme);
         match(numt);
         break;
 
     case lpart:
         match(lpart);
-        expr();
+        expr(size, outArg);
         match(rpart);
         break;
     
     case nott:
+        throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": The not operation has not been implemented");
         match(nott);
-        factor();
+        factor(size, outArg);
         break;
 
     case addopt:
@@ -407,8 +452,17 @@ void RDP::factor()
         {
             throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": " + scanner.Lexeme + " is not allowed as a sign operator.");
         }
+        //Get the operation
+        a13_GetUnaryOp(scanner.Lexeme, theOp);
         match(addopt);
-        factor();
+        //Get the factor
+        factor(size, outFactor);
+        //Create a new temp
+        tempName = symTbl.CreateTemp(depth, size);
+        //Convert to TACArg
+        a11_CreateTACArg(tempName, outArg);
+        //Emit operation
+        codeGen.EmitUnaryAssign(outArg, outFactor, theOp);
         break;
     
     default:
@@ -569,5 +623,82 @@ void RDP::a10_CheckDefined(std::string lexeme)
     if (entry == nullptr)
     {
         throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": " + lexeme + " is not defined.");
+    }
+}
+
+void RDP::a11_CreateTACArg(std::string lexeme, TACArg & retTACArg)
+{
+    SymTblEntry* entry = symTbl.Lookup(lexeme);
+    if (entry->entryType == Constant)
+    {
+        std::string value;
+        if (entry->constant.type == RealConst)
+        {
+            value = std::to_string(entry->constant.valueR);
+        }
+        else
+        {
+            value = std::to_string(entry->constant.value);
+        }
+        retTACArg = TACArg(ConstTAC, value);
+    }
+    else if (entry->entryType == Variable)
+    {
+        if (entry->depth == 1) //Then it is a global
+        {
+            retTACArg = TACArg(GlobalTAC, lexeme);
+        }
+        else //Then it is on the stack
+        {
+            retTACArg = TACArg(StackTAC, entry->variable.offset);
+        }
+    }
+}
+
+void RDP::a12_GetBinaryOp(std::string opString, BinOp & op)
+{
+    if (opString == "+")
+    {
+        op = addBOP;
+    }
+    else if (opString == "-")
+    {
+        op = subBOP;
+    }
+    else if (opString == "*")
+    {
+        op = mulBOP;
+    }
+    else if (opString == "/")
+    {
+        op = divBOP;
+    }
+    else if (opString == "mod")
+    {
+        op = modBOP;
+    }
+    else if (opString == "rem")
+    {
+        op = remBOP;
+    }
+    else
+    {
+        throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": " + opString + " is not an implemented binary operation.");
+    }
+}
+
+void RDP::a13_GetUnaryOp(std::string opString, UnOp &op)
+{
+    if (opString == "+")
+    {
+        op = posUOP;
+    }
+    else if (opString == "-")
+    {
+        op = negUOP;
+    }
+    else
+    {
+        throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": " + opString + " is not an implemented unary operation.");
     }
 }
