@@ -54,7 +54,23 @@ struct TACArg
         std::string value;
         std::string name;
     };
-    TACArg(TACArgType type, int data) : type(type) { 
+    TACArg& operator=(const TACArg& toCopy) {
+        if (this != &toCopy) {
+            this->~TACArg();
+            new (this) TACArg(toCopy);  // placement new copy
+        }
+        return *this;
+    }
+    TACArg(const TACArg& toCopy) : type(toCopy.type) {
+        if (type == StackTAC) {
+            offset = toCopy.offset;
+        } else if (type == ConstTAC) {
+            new (&value) std::string(toCopy.value);
+        } else {
+            new (&name) std::string(toCopy.name);
+        }
+    }
+    TACArg(TACArgType type = StackTAC, int data = 0) : type(type) { 
         if (type != StackTAC)
         {
             throw std::logic_error("Invalid TACArgType for int constructor");
