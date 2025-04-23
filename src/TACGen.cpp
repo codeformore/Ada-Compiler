@@ -176,7 +176,7 @@ void TACGen::EmitProcCall(std::string P)
 {
     //Output line call P
     outFile << std::setw(8) << ""; //Nothing in column 1
-    outFile << std::setw(5) << "call "; //Keyword call in column 2
+    outFile << std::setw(8) << "call "; //Keyword call in column 2
     outFile << std::setw(16) << P; //P in column 3
     outFile << std::endl; //Finish Line
 }
@@ -194,7 +194,7 @@ void TACGen::EmitPush(const TACArg &a, bool ref)
 
     //Output line push a or push &a
     outFile << std::setw(8) << ""; //Nothing in column 1
-    outFile << std::setw(5) << "push "; //Keyword push in column 2
+    outFile << std::setw(8) << "push "; //Keyword push in column 2
     outFile << std::setw(16) << aSTR; //a or &a in column 3
     outFile << std::endl; //Finish Line
 }

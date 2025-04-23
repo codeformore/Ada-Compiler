@@ -29,7 +29,7 @@ private:
 
     //RDP Parsing
     //Proc Grammar
-    void prog();
+    std::string prog();
     void declarativePart(int & size);
     void identifierList(IdList* & idList);
     void moreIdentifiers(IdList* & idList);

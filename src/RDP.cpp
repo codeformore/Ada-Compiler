@@ -16,7 +16,8 @@
 void RDP::Parse()
 {
     scanner.GetNextToken();
-    prog();
+    std::string mainProcName = prog();
+    codeGen.EmitProgEnd(mainProcName);
     symTbl.WriteTable(depth); //For assignment 5
     if (scanner.Token != eoft)
     {
@@ -40,7 +41,7 @@ void RDP::match(TokenT expected)
 
 //Implements: 
 // Prog -> proct idt {1} {2} Args {3} is DeclarativePart Procedures begint SeqOfStatements {7} endt idt {4} semit
-void RDP::prog()
+std::string RDP::prog()
 {
     match(proct);
     a1_CheckDup(scanner.Lexeme);
@@ -53,14 +54,17 @@ void RDP::prog()
     match(ist);
     declarativePart(newEntry->procedure.size);
     procedures();
+    codeGen.EmitProcHead(newEntry->lexeme);
     match(begint);
     seqOfStatements(newEntry->procedure.size);
     symTbl.WriteTable(depth); //For Assignment 5
     a7_DeleteScope();
+    codeGen.EmitProcEnd(newEntry->lexeme);
     match(endt);
     a4_CheckClosingID(scanner.Lexeme, newEntry->lexeme);
     match(idt);
     match(semit);
+    return newEntry->lexeme;
 }
 
 //Implements:
