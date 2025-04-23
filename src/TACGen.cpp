@@ -65,9 +65,6 @@ TACGen::TACGen(std::string theFileName)
     }
     outFile << std::setfill(' '); //Ensure fill character is ' '
     outFile << std::left; //Ensure left align is used
-
-    //Initialize Current Temp
-    curTemp = 0;
 }
 
 TACGen::~TACGen()
