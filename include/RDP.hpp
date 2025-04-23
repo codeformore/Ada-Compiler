@@ -54,6 +54,10 @@ private:
     void term(int & size, TACArg & outArg);
     void moreFactor(TACArg inArg, int & size, TACArg & outArg);
     void factor(int & size, TACArg & outArg);
+    void procCall(std::string idLexeme);
+    void params(Param* curParam);
+    void paramsTail(Param* curParam);
+
 
 
     //Actions

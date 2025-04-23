@@ -304,17 +304,29 @@ void RDP::statement(int & size)
 }
 
 //Implements:
-// AssignStat -> {10} idt assignt Expr
+// AssignStat -> {10} idt assignt Expr | ProcCall
 void RDP::assignStat(int & size)
 {
+    std::string idLexeme = scanner.Lexeme;
     TACArg idArg;
-    a10_CheckDefined(scanner.Lexeme);
-    a11_CreateTACArg(scanner.Lexeme, idArg);
+    a10_CheckDefined(idLexeme);
+    a11_CreateTACArg(idLexeme, idArg);
     match(idt);
-    match(assignt);
-    TACArg exprArg;
-    expr(size, exprArg);
-    codeGen.EmitCopy(idArg, exprArg);
+    if (scanner.Token == assignt)
+    {
+        match(assignt);
+        TACArg exprArg;
+        expr(size, exprArg);
+        codeGen.EmitCopy(idArg, exprArg);
+    }
+    else if (scanner.Token == lpart)
+    {
+        procCall(idLexeme);
+    }
+    else
+    {
+        throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": expected one of assignt or lpart, but got " + TOKEN_NAMES.at(scanner.Token) + " instead.");
+    }
 }
 
 //Implements:
@@ -468,6 +480,119 @@ void RDP::factor(int & size, TACArg & outArg)
     default:
         throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Got " + TOKEN_NAMES.at(scanner.Token) + ", but expected one of idt, numt, lpart, nott, addopt.");
         break;
+    }
+}
+
+//Implements:
+// ProcCall -> lpart Params rpart
+void RDP::procCall(std::string idLexeme)
+{
+    //Get entry and check if it is a procedure
+    SymTblEntry* entry = symTbl.Lookup(idLexeme);
+    if (entry->entryType != Procedure)
+    {
+        throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": " + idLexeme + " is not a procedure.");
+    }
+    match(lpart);
+    params(entry->procedure.params);
+    match(rpart);
+
+    //Emit the call
+    codeGen.EmitProcCall(entry->lexeme);
+}
+
+//Implements:
+// Params -> idt ParamsTail | num ParamsTail | o
+void RDP::params(Param *curParam)
+{
+    if (scanner.Token == idt)
+    {
+        if (curParam == nullptr)
+        {
+            throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Too many arguments provided.");
+        }
+        a10_CheckDefined(scanner.Lexeme);
+        //NO TYPE CHECKING OCCURRING
+        //Determine passing mode
+        bool ref = (curParam->mode != InMode);
+        //Create TACArg from param
+        TACArg paramArg;
+        a11_CreateTACArg(scanner.Lexeme, paramArg);
+        //Emit Push
+        codeGen.EmitPush(paramArg, ref);
+        match(idt);
+        paramsTail(curParam->next);
+    }
+    else if (scanner.Token == numt)
+    {
+        if (curParam == nullptr)
+        {
+            throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Too many arguments provided.");
+        }
+        //NO TYPE CHECKING OCCURRING
+        //Determine passing mode
+        if (curParam->mode != InMode)
+        {
+            throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Cannot use a constant as a inout or out parameter.");
+        }
+        //Create TACArg from param
+        TACArg paramArg = TACArg(ConstTAC, scanner.Lexeme);
+        //Emit Push
+        codeGen.EmitPush(paramArg, false);
+        match(numt);
+        paramsTail(curParam->next);
+    }
+    //Otherwise, nullable
+}
+
+//Implements:
+// ParamsTail -> , idt ParamsTail | , numt ParamsTail | o
+void RDP::paramsTail(Param *curParam)
+{
+
+    if (scanner.Token != commat)
+    {
+        return;
+    }
+    
+    match(commat);
+
+    if (scanner.Token == idt)
+    {
+        if (curParam == nullptr)
+        {
+            throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Too many arguments provided.");
+        }
+        a10_CheckDefined(scanner.Lexeme);
+        //NO TYPE CHECKING OCCURRING
+        //Determine passing mode
+        bool ref = (curParam->mode != InMode);
+        //Create TACArg from param
+        TACArg paramArg;
+        a11_CreateTACArg(scanner.Lexeme, paramArg);
+        //Emit Push
+        codeGen.EmitPush(paramArg, ref);
+        match(idt);
+        paramsTail(curParam->next);
+    }
+    else if (scanner.Token == numt)
+    {
+        if (curParam == nullptr)
+        {
+            throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Too many arguments provided.");
+        }
+        //NO TYPE CHECKING OCCURRING
+        //Determine passing mode
+        if (curParam->mode != InMode)
+        {
+            throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Cannot use a constant as a inout or out parameter.");
+        }
+        //Create TACArg from param
+        TACArg paramArg = TACArg(ConstTAC, scanner.Lexeme);
+        //Emit Push
+        codeGen.EmitPush(paramArg, false);
+        match(numt);
+        paramsTail(curParam->next);
     }
 }
 
