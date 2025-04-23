@@ -63,6 +63,22 @@ int SymTbl::hash(std::string lex)
     return h % TBL_SIZE;
 }
 
+std::string SymTbl::CreateTemp(int depth, int & size)
+{
+    std::string tempName = "_t" + std::to_string(curTemp);
+    Insert(tempName, idt, depth);
+    SymTblEntry* entry = Lookup(tempName);
+    //ASSUMING only INT
+    entry->entryType = Variable;
+    entry->variable.offset = size;
+    entry->variable.size = 2;
+    entry->variable.type = IntVar;
+    size += 2;
+    //DONE ASSUMING
+    curTemp++;
+    return tempName;
+}
+
 void SymTbl::Insert(std::string lex, TokenT token, int depth)
 {
     int key = hash(lex);
@@ -183,6 +199,7 @@ void SymTbl::WriteTable(int depth)
 
 SymTbl::SymTbl()
 {
+    curTemp = 0;
     for (int i = 0; i < TBL_SIZE; i++)
     {
         entries[i] = nullptr;

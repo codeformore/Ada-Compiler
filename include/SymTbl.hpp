@@ -133,7 +133,9 @@ class SymTbl
 protected:
     SymTblEntry* entries[TBL_SIZE];
     int hash(std::string lex);
+    int curTemp;
 public:
+    std::string CreateTemp(int depth, int & size);
     void Insert(std::string lex, TokenT token, int depth);
     SymTblEntry* Lookup(std::string lex);
     void DeleteDepth(int depth);
