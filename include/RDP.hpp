@@ -37,8 +37,8 @@ private:
     void value(VarConstType & theType, int & value, float & valueR);
     void procedures();
     void args(Param* & paramList);
-    void argList(Param* & paramList);
-    void moreArgs(Param* & paramList);
+    void argList(Param* & paramList, int & size);
+    void moreArgs(Param* & paramList, int & size);
     void mode(ParamMode & mode);
     void seqOfStatements(int & size);
     
@@ -58,14 +58,12 @@ private:
     void params(Param* curParam);
     void paramsTail(Param* curParam);
 
-
-
     //Actions
     void a1_CheckDup(std::string lexeme);
     SymTblEntry* a2_InsertProc(std::string lexeme, TokenT token);
     void a3_AssignArgListToProc(Param* start, SymTblEntry* entry);
     void a4_CheckClosingID(std::string lexeme, std::string procName);
-    void a5_InsertVarsAndConsts(int & curSize, IdList* idList, bool isConst, VarConstType type, int value, float valueR);
+    void a5_InsertVarsAndConsts(int &curSize, IdList *idList, bool isConst, VarConstType type, int value, float valueR, bool posOffset);
     void a6_AddModeAndType(Param* & cur, ParamMode mode, VarType varType, IdList* idList);
     void a7_DeleteScope();
     void a8_AddIDToList(IdList* & idList, std::string idToAdd);

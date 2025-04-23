@@ -94,7 +94,7 @@ void RDP::declarativePart(int & size)
         int value;
         float valueR;
         typeMark(isConst, theType, value, valueR);
-        a5_InsertVarsAndConsts(size, idList, isConst, theType, value, valueR);
+        a5_InsertVarsAndConsts(size, idList, isConst, theType, value, valueR, false);
         a9_DeallocateIdentiferList(idList);
         match(semit);
         declarativePart(size);
@@ -198,7 +198,8 @@ void RDP::args(Param* & paramList)
     if (scanner.Token == lpart)
     {
         match(lpart);
-        argList(paramList);
+        int size = 0;
+        argList(paramList, size);
         match(rpart);
     }
     //Otherwise, nullable
@@ -206,37 +207,36 @@ void RDP::args(Param* & paramList)
 
 //Implements:
 // ArgList -> Mode IdentifierList colont TypeMark {5} {6} {9} MoreArgs
-void RDP::argList(Param* & paramList)
+void RDP::argList(Param* & paramList, int & size)
 {
     ParamMode theMode;
     mode(theMode);
     IdList* idList = nullptr;
     identifierList(idList);
     match(colont);
-    int size = 0;
     bool isConst;
     VarConstType theType;
     int value;
     float valueR;
     typeMark(isConst, theType, value, valueR);
-    a5_InsertVarsAndConsts(size, idList, isConst, theType, value, valueR);
+    a5_InsertVarsAndConsts(size, idList, isConst, theType, value, valueR, true);
     if (isConst)
     {
         throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Constant Typed Arguments are not allowed.");
     }
     a6_AddModeAndType(paramList, theMode, theType.varType, idList);
     a9_DeallocateIdentiferList(idList);
-    moreArgs(paramList);
+    moreArgs(paramList, size);
 }
 
 //Implements:
 // MoreArgs -> semit ArgList | o
-void RDP::moreArgs(Param* & paramList)
+void RDP::moreArgs(Param* & paramList, int & size)
 {
     if (scanner.Token == semit)
     {
         match(semit);
-        argList(paramList);
+        argList(paramList, size);
     }
     //Otherwise, nullable
 }
@@ -638,7 +638,7 @@ void RDP::a4_CheckClosingID(std::string lexeme, std::string procName)
     }
 }
 
-void RDP::a5_InsertVarsAndConsts(int &curSize, IdList *idList, bool isConst, VarConstType type, int value, float valueR)
+void RDP::a5_InsertVarsAndConsts(int &curSize, IdList *idList, bool isConst, VarConstType type, int value, float valueR, bool posOffset)
 {
     while (idList != nullptr)
     {
@@ -661,7 +661,6 @@ void RDP::a5_InsertVarsAndConsts(int &curSize, IdList *idList, bool isConst, Var
         else
         {
             theNewEntry->entryType = Variable;
-            theNewEntry->variable.offset = curSize;
             theNewEntry->variable.type = type.varType;
             switch (type.varType)
             {
@@ -676,6 +675,14 @@ void RDP::a5_InsertVarsAndConsts(int &curSize, IdList *idList, bool isConst, Var
             case CharVar:
                 theNewEntry->variable.size = 1;
                 break;
+            }
+            if (posOffset)
+            {
+                theNewEntry->variable.offset = curSize + theNewEntry->variable.size;
+            }
+            else
+            {
+                theNewEntry->variable.offset = -curSize;
             }
             curSize += theNewEntry->variable.size;
         }

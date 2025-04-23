@@ -70,7 +70,7 @@ std::string SymTbl::CreateTemp(int depth, int & size)
     SymTblEntry* entry = Lookup(tempName);
     //ASSUMING only INT
     entry->entryType = Variable;
-    entry->variable.offset = size;
+    entry->variable.offset = -size;
     entry->variable.size = 2;
     entry->variable.type = IntVar;
     size += 2;
