@@ -121,6 +121,7 @@ public:
     void EmitPush(const TACArg & a, bool ref);
     void EmitProcHead(std::string P);
     void EmitProcEnd(std::string P);
+    void EmitProgEnd(std::string P);
 };
 
 #endif

@@ -65,6 +65,9 @@ TACGen::TACGen(std::string theFileName)
     }
     outFile << std::setfill(' '); //Ensure fill character is ' '
     outFile << std::left; //Ensure left align is used
+
+    //Initialize Current Temp
+    curTemp = 0;
 }
 
 TACGen::~TACGen()
@@ -213,4 +216,12 @@ void TACGen::EmitProcEnd(std::string P)
     outFile << std::setw(8) << "ENDP"; //Keyword call in column 1
     outFile << std::setw(16) << P; //P in column 2
     outFile << std::endl; //Finish Line
+}
+
+void TACGen::EmitProgEnd(std::string P)
+{
+    //Output line start proc P
+    outFile << std::setw(8) << "START";
+    outFile << std::setw(8) << "PROC";
+    outFile << std::setw(16) << P;
 }
