@@ -224,4 +224,5 @@ void TACGen::EmitProgEnd(std::string P)
     outFile << std::setw(8) << "START";
     outFile << std::setw(8) << "PROC";
     outFile << std::setw(16) << P;
+    outFile << std::endl;
 }
