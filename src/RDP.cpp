@@ -74,20 +74,7 @@ void RDP::declarativePart(int & size)
     if (scanner.Token == idt)
     {
         IdList* idList = nullptr;
-        identifierList(idList);
-
-        //Debug
-        // IdList* tmp = idList;
-        // while (tmp != nullptr)
-        // {
-        //     std::cout << tmp->id << std::endl;
-        //     tmp = tmp->next;
-        // }
-        // if (idList == nullptr)
-        // {
-        //     std::cout << "PROBLEM" << std::endl;
-        // }
-
+        identifierList(idList, false);
         match(colont);
         bool isConst;
         VarConstType theType;
@@ -104,11 +91,19 @@ void RDP::declarativePart(int & size)
 
 //Implements: 
 // IdentifierList -> {8} idt MoreIdentifiers
-void RDP::identifierList(IdList* & idList)
+void RDP::identifierList(IdList* & idList, bool reverse)
 {
-    a8_AddIDToList(idList, scanner.Lexeme);
+    std::string idLex = scanner.Lexeme;
+    if (!reverse)
+    {
+        a8_AddIDToList(idList, idLex);
+    }
     match(idt);
     moreIdentifiers(idList);
+    if (reverse)
+    {
+        a8_AddIDToList(idList, idLex);
+    }
 }
 
 //Implements:
@@ -212,21 +207,21 @@ void RDP::argList(Param* & paramList, int & size)
     ParamMode theMode;
     mode(theMode);
     IdList* idList = nullptr;
-    identifierList(idList);
+    identifierList(idList, true);
     match(colont);
     bool isConst;
     VarConstType theType;
     int value;
     float valueR;
     typeMark(isConst, theType, value, valueR);
-    a5_InsertVarsAndConsts(size, idList, isConst, theType, value, valueR, true);
     if (isConst)
     {
         throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Constant Typed Arguments are not allowed.");
     }
+    moreArgs(paramList, size);
+    a5_InsertVarsAndConsts(size, idList, isConst, theType, value, valueR, true);
     a6_AddModeAndType(paramList, theMode, theType.varType, idList);
     a9_DeallocateIdentiferList(idList);
-    moreArgs(paramList, size);
 }
 
 //Implements:

@@ -31,7 +31,7 @@ private:
     //Proc Grammar
     std::string prog();
     void declarativePart(int & size);
-    void identifierList(IdList* & idList);
+    void identifierList(IdList* & idList, bool reverse);
     void moreIdentifiers(IdList* & idList);
     void typeMark(bool & constType, VarConstType & theType, int & value, float & valueR);
     void value(VarConstType & theType, int & value, float & valueR);
