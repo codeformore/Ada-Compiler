@@ -92,6 +92,7 @@ struct VarEntry
     VarType type;
     int offset;
     int size;
+    bool ref;
 };
 
 struct ConstEntry

@@ -73,6 +73,7 @@ std::string SymTbl::CreateTemp(int depth, int & size)
     entry->variable.offset = -size;
     entry->variable.size = 2;
     entry->variable.type = IntVar;
+    entry->variable.ref = false;
     size += 2;
     //DONE ASSUMING
     curTemp++;
@@ -154,6 +155,7 @@ void SymTbl::WriteTable(int depth)
                     std::cout << "Offset: " << top->variable.offset 
                               << " Size: " << top->variable.size 
                               << " Type: " << VARTYPE_NAMES.at(top->variable.type) 
+                              << " Ref: " << (top->variable.ref ? "yes" : "no")
                               << std::endl;
                 }
                 else if (top->entryType == Constant)

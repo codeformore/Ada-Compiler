@@ -5,10 +5,10 @@
 TEST(TACGenE2E, correctness)
 {
     TACGen codeGen("test.ada");
-    TACArg w(StackTAC, 5);
-    TACArg x(StackTAC, -5);
-    TACArg y(GlobalTAC, "y");
-    TACArg z(ConstTAC, "25");
+    TACArg w(StackTAC, false, 5);
+    TACArg x(StackTAC, true, -5);
+    TACArg y(GlobalTAC, false, "y");
+    TACArg z(ConstTAC, false, "25");
 
     //Emit Lines
     codeGen.EmitProcHead("main");
@@ -36,12 +36,12 @@ TEST(TACGenE2E, correctness)
     //The File to Match
     std::string toMatch =
     "PROC    main            \n"
-    "        _BP-5             =  y                 +  25              \n"
-    "        _BP-5             =    -y               \n"
-    "        _BP-5             =  _BP+5           \n"
-    "        push _BP-5           \n"
-    "        push &y              \n"
-    "        call one             \n"
+    "        *_BP-5            =  y                 +  25              \n"
+    "        *_BP-5            =    -y               \n"
+    "        *_BP-5            =  _BP+5           \n"
+    "        push    *_BP-5          \n"
+    "        push    &y              \n"
+    "        call    one             \n"
     "ENDP    main            \n";
 
     //Check equality

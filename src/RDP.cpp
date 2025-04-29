@@ -81,7 +81,7 @@ void RDP::declarativePart(int & size)
         int value;
         float valueR;
         typeMark(isConst, theType, value, valueR);
-        a5_InsertVarsAndConsts(size, idList, isConst, theType, value, valueR, false);
+        a5_InsertVarsAndConsts(size, idList, isConst, theType, value, valueR, false, false);
         a9_DeallocateIdentiferList(idList);
         match(semit);
         declarativePart(size);
@@ -219,7 +219,7 @@ void RDP::argList(Param* & paramList, int & size)
         throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Constant Typed Arguments are not allowed.");
     }
     moreArgs(paramList, size);
-    a5_InsertVarsAndConsts(size, idList, isConst, theType, value, valueR, true);
+    a5_InsertVarsAndConsts(size, idList, isConst, theType, value, valueR, true, (theMode != InMode));
     a6_AddModeAndType(paramList, theMode, theType.varType, idList);
     a9_DeallocateIdentiferList(idList);
 }
@@ -442,7 +442,7 @@ void RDP::factor(int & size, TACArg & outArg)
         break;
 
     case numt:
-        outArg = TACArg(ConstTAC, scanner.Lexeme);
+        outArg = TACArg(ConstTAC, false, scanner.Lexeme);
         match(numt);
         break;
 
@@ -535,7 +535,7 @@ void RDP::params(Param *curParam)
             throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Cannot use a constant as a inout or out parameter.");
         }
         //Create TACArg from param
-        TACArg paramArg = TACArg(ConstTAC, scanner.Lexeme);
+        TACArg paramArg = TACArg(ConstTAC, false, scanner.Lexeme);
         //Emit Push
         codeGen.EmitPush(paramArg, false);
         match(numt);
@@ -587,7 +587,7 @@ void RDP::paramsTail(Param *curParam)
             throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Cannot use a constant as a inout or out parameter.");
         }
         //Create TACArg from param
-        TACArg paramArg = TACArg(ConstTAC, scanner.Lexeme);
+        TACArg paramArg = TACArg(ConstTAC, false, scanner.Lexeme);
         //Emit Push
         codeGen.EmitPush(paramArg, false);
         match(numt);
@@ -633,7 +633,7 @@ void RDP::a4_CheckClosingID(std::string lexeme, std::string procName)
     }
 }
 
-void RDP::a5_InsertVarsAndConsts(int &curSize, IdList *idList, bool isConst, VarConstType type, int value, float valueR, bool posOffset)
+void RDP::a5_InsertVarsAndConsts(int &curSize, IdList *idList, bool isConst, VarConstType type, int value, float valueR, bool posOffset, bool ref)
 {
     while (idList != nullptr)
     {
@@ -657,6 +657,7 @@ void RDP::a5_InsertVarsAndConsts(int &curSize, IdList *idList, bool isConst, Var
         {
             theNewEntry->entryType = Variable;
             theNewEntry->variable.type = type.varType;
+            theNewEntry->variable.ref = ref;
             switch (type.varType)
             {
             case IntVar:
@@ -771,17 +772,17 @@ void RDP::a11_CreateTACArg(std::string lexeme, TACArg & retTACArg)
         {
             value = std::to_string(entry->constant.value);
         }
-        retTACArg = TACArg(ConstTAC, value);
+        retTACArg = TACArg(ConstTAC, false, value);
     }
     else if (entry->entryType == Variable)
     {
         if (entry->depth == 1) //Then it is a global
         {
-            retTACArg = TACArg(GlobalTAC, lexeme);
+            retTACArg = TACArg(GlobalTAC, entry->variable.ref, lexeme);
         }
         else //Then it is on the stack
         {
-            retTACArg = TACArg(StackTAC, entry->variable.offset);
+            retTACArg = TACArg(StackTAC, entry->variable.ref, entry->variable.offset);
         }
     }
 }

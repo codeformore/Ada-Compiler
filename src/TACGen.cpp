@@ -32,6 +32,10 @@ std::string TACGen::tacArgToString(const TACArg & arg)
     switch (arg.type)
     {
     case StackTAC:
+        if (arg.ref)
+        {
+            retVal += "*";
+        }
         retVal += "_BP";
         if (arg.offset >= 0)
         {

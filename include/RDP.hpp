@@ -63,7 +63,7 @@ private:
     SymTblEntry* a2_InsertProc(std::string lexeme, TokenT token);
     void a3_AssignArgListToProc(Param* start, SymTblEntry* entry);
     void a4_CheckClosingID(std::string lexeme, std::string procName);
-    void a5_InsertVarsAndConsts(int &curSize, IdList *idList, bool isConst, VarConstType type, int value, float valueR, bool posOffset);
+    void a5_InsertVarsAndConsts(int &curSize, IdList *idList, bool isConst, VarConstType type, int value, float valueR, bool posOffset, bool ref);
     void a6_AddModeAndType(Param* & cur, ParamMode mode, VarType varType, IdList* idList);
     void a7_DeleteScope();
     void a8_AddIDToList(IdList* & idList, std::string idToAdd);

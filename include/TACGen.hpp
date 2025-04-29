@@ -48,6 +48,7 @@ const std::map<TACArgType, std::string> TACARGTYPE_NAMES = {
 struct TACArg
 {
     TACArgType type;
+    bool ref;
     union
     {
         int offset;
@@ -61,7 +62,7 @@ struct TACArg
         }
         return *this;
     }
-    TACArg(const TACArg& toCopy) : type(toCopy.type) {
+    TACArg(const TACArg& toCopy) : type(toCopy.type), ref(toCopy.ref) {
         if (type == StackTAC) {
             offset = toCopy.offset;
         } else if (type == ConstTAC) {
@@ -70,14 +71,14 @@ struct TACArg
             new (&name) std::string(toCopy.name);
         }
     }
-    TACArg(TACArgType type = StackTAC, int data = 0) : type(type) { 
+    TACArg(TACArgType type = StackTAC, bool ref = false, int data = 0) : type(type), ref(ref) { 
         if (type != StackTAC)
         {
             throw std::logic_error("Invalid TACArgType for int constructor");
         }
         this->offset = data; 
     }
-    TACArg(TACArgType type, std::string data) : type(type) {
+    TACArg(TACArgType type, bool ref, std::string data) : type(type), ref(ref) {
         if (type == ConstTAC) 
         {
             new (&value) std::string(std::move(data));
