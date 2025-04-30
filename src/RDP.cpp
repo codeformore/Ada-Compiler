@@ -329,10 +329,21 @@ void RDP::assignStat(int & size)
 }
 
 //Implements:
-// IOStat -> o
+// IOStat -> In_Stat | Out_Stat
 void RDP::IOStat()
 {
-    //Nullable
+    if (scanner.Token == gett)
+    {
+        In_Stat();
+    }
+    else if (scanner.Token == putt || scanner.Token == putlnt)
+    {
+        Out_Stat();
+    }
+    else
+    {
+        throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": expected one of gett, putt, or putlnt, but got " + TOKEN_NAMES.at(scanner.Token) + " instead.");
+    }
 }
 
 //Implements:
@@ -592,6 +603,73 @@ void RDP::paramsTail(Param *curParam)
         codeGen.EmitPush(paramArg, false);
         match(numt);
         paramsTail(curParam->next);
+    }
+}
+
+//Implements:
+// In_Stat -> gett lpart IdList rpart
+void RDP::In_Stat()
+{
+    match(gett);
+    match(lpart);
+    IdList* idList;
+    identifierList(idList, false);
+    match(rpart);
+}
+
+//Implements:
+// Out_Stat -> putt lpart Write_List rpart | putlnt lpart Write_List rpart
+void RDP::Out_Stat()
+{
+    if (scanner.Token == putt)
+    {
+        match(putt);
+    }
+    else
+    {
+        match(putlnt);
+    }
+    match(lpart);
+    Write_List();
+    match(rpart);
+}
+
+//Implements:
+// Write_List -> Write_Token Write_List_Tail
+void RDP::Write_List()
+{
+    Write_Token();
+    Write_List_Tail();
+}
+
+//Implements:
+// Write_List_Tail -> commat Write_Token Write_List_Tail | o
+void RDP::Write_List_Tail()
+{
+    if (scanner.Token == commat)
+    {
+        match(commat);
+        Write_Token();
+        Write_List_Tail();
+    }
+    //Otherwise, nullable
+}
+
+//Implements:
+// Write_Token -> idt | numt | strt
+void RDP::Write_Token()
+{
+    if (scanner.Token == idt)
+    {
+        match(idt);
+    }
+    else if (scanner.Token == numt)
+    {
+        match(numt);
+    }
+    else if (scanner.Token == strt)
+    {
+        match(strt);
     }
 }
 

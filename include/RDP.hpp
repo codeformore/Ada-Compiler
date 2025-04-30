@@ -47,6 +47,8 @@ private:
     void statement(int & size);
     void assignStat(int & size);
     void IOStat();
+
+    //Expression Grammar
     void expr(int & size, TACArg & outArg);
     void relation(int & size, TACArg & outArg);
     void simpleExpr(int & size, TACArg & outArg);
@@ -54,9 +56,18 @@ private:
     void term(int & size, TACArg & outArg);
     void moreFactor(TACArg inArg, int & size, TACArg & outArg);
     void factor(int & size, TACArg & outArg);
+
+    //Procedure Call Grammar
     void procCall(std::string idLexeme);
     void params(Param* curParam);
     void paramsTail(Param* curParam);
+
+    //IO Statement Grammar
+    void In_Stat();
+    void Out_Stat();
+    void Write_List();
+    void Write_List_Tail();
+    void Write_Token();
 
     //Actions
     void a1_CheckDup(std::string lexeme);
