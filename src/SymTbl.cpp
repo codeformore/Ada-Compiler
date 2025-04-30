@@ -37,6 +37,8 @@
 *   SymTblEntry* Lookup(std::string lex)
 *   void DeleteDepth(int depth)
 *   void WriteTable(int depth)
+*   void InsertLiteral(std::string literal, int & literalNum)
+*   std::string LookupLiteral(int literalNum)
 ********************************************************************/
 
 #include <SymTbl.hpp>
@@ -199,9 +201,30 @@ void SymTbl::WriteTable(int depth)
     std::cout << std::endl;
 }
 
+void SymTbl::InsertLiteral(std::string literal, int & literalNum)
+{
+    if (curLit >= STR_TABLE_SIZE)
+    {
+        throw std::runtime_error("Reached Max Literals in String Literal Table.");
+    }
+
+    literals[curLit] = literal;
+    curLit += 1;
+}
+
+std::string SymTbl::LookupLiteral(int literalNum)
+{
+    if (literalNum >= curLit || literalNum < 0)
+    {
+        throw std::runtime_error("Literal is not in String Literal Table.");
+    }
+    return literals[literalNum];
+}
+
 SymTbl::SymTbl()
 {
     curTemp = 0;
+    curLit = 0;
     for (int i = 0; i < TBL_SIZE; i++)
     {
         entries[i] = nullptr;

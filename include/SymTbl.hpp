@@ -37,6 +37,8 @@
 *   SymTblEntry* Lookup(std::string lex)
 *   void DeleteDepth(int depth)
 *   void WriteTable(int depth)
+*   void InsertLiteral(std::string literal, int & literalNum)
+*   std::string LookupLiteral(int literalNum)
 ********************************************************************/
 
 #ifndef SYMTBL_HPP
@@ -47,6 +49,7 @@
 #include <map>
 
 const int TBL_SIZE = 211;
+const int STR_TABLE_SIZE = 50;
 
 enum EntryType { Variable, Constant, Procedure };
 const std::map<EntryType, std::string> ENTRYTYPE_NAMES = {
@@ -133,14 +136,18 @@ class SymTbl
 {
 protected:
     SymTblEntry* entries[TBL_SIZE];
+    std::string literals[STR_TABLE_SIZE];
     int hash(std::string lex);
     int curTemp;
+    int curLit;
 public:
     std::string CreateTemp(int depth, int & size);
     void Insert(std::string lex, TokenT token, int depth);
     SymTblEntry* Lookup(std::string lex);
     void DeleteDepth(int depth);
     void WriteTable(int depth);
+    void InsertLiteral(std::string literal, int & literalNum);
+    std::string LookupLiteral(int literalNum);
     SymTbl();
     ~SymTbl();
 };
