@@ -43,6 +43,11 @@ std::string TACGen::tacArgToString(const TACArg & arg)
         }
         retVal += std::to_string(arg.offset);
         break;
+
+    case LitTAC:
+        retVal += "_S";
+        retVal += std::to_string(arg.literalNum);
+        break;
     
     case ConstTAC:
         retVal = arg.value;

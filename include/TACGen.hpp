@@ -40,9 +40,9 @@ const std::map<UnOp, std::string> UNOP_NAMES = {
     {posUOP, "positive"}, {negUOP, "negative"}, {notUOP, "not"}
 };
 
-enum TACArgType { StackTAC, ConstTAC, GlobalTAC };
+enum TACArgType { StackTAC, ConstTAC, GlobalTAC, LitTAC };
 const std::map<TACArgType, std::string> TACARGTYPE_NAMES = {
-    {StackTAC, "Stack"}, {ConstTAC, "Constant"}, {GlobalTAC, "Global"}
+    {StackTAC, "Stack"}, {ConstTAC, "Constant"}, {GlobalTAC, "Global"}, {LitTAC, "Literal"}
 };
 
 struct TACArg
@@ -54,6 +54,7 @@ struct TACArg
         int offset;
         std::string value;
         std::string name;
+        int literalNum;
     };
     TACArg& operator=(const TACArg& toCopy) {
         if (this != &toCopy) {
@@ -67,13 +68,18 @@ struct TACArg
             offset = toCopy.offset;
         } else if (type == ConstTAC) {
             new (&value) std::string(toCopy.value);
-        } else {
+        } else if (type == GlobalTAC) {
             new (&name) std::string(toCopy.name);
+        } else {
+            literalNum = toCopy.literalNum;
         }
     }
     TACArg(TACArgType type = StackTAC, bool ref = false, int data = 0) : type(type), ref(ref) { 
-        if (type != StackTAC)
-        {
+        if (type == StackTAC) {
+            this->offset = data;
+        } else if (type == LitTAC) {
+            this->literalNum = data;
+        } else {
             throw std::logic_error("Invalid TACArgType for int constructor");
         }
         this->offset = data; 
@@ -86,7 +92,7 @@ struct TACArg
         else if (type == GlobalTAC) 
         {
             new (&name) std::string(std::move(data));
-        } 
+        }
         else 
         {
             throw std::logic_error("Invalid TACArgType for string constructor");
