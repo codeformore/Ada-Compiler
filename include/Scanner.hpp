@@ -31,14 +31,14 @@ enum TokenT
     elset, elseift, whilet, loopt, realt, integert, chart,
     gett, putt, endt, intok, outt, inoutt, lpart, rpart, commat, colont,
     idt, numt, strt, assignt, relopt, addopt, mulopt,
-    semit, periodt, eoft, unknownt, nott
+    semit, periodt, eoft, unknownt, nott, putlnt
 };
 
 const std::map<std::string, TokenT> KEYWORDS = {
     {"begin", begint}, {"module", modulet}, {"constant", constt}, {"procedure", proct}, {"is", ist},
     {"if", ift}, {"then", thent}, {"else", elset}, {"elseif", elseift}, {"while", whilet},
     {"loop", loopt}, {"real", realt}, {"integer", integert}, {"char", chart}, {"get", gett},
-    {"put", putt}, {"end", endt}, {"in", intok}, {"out", outt}, {"inout", inoutt}
+    {"put", putt}, {"putln", putlnt}, {"end", endt}, {"in", intok}, {"out", outt}, {"inout", inoutt}
 };
 
 const std::map<TokenT, std::string> TOKEN_NAMES = {
@@ -49,7 +49,7 @@ const std::map<TokenT, std::string> TOKEN_NAMES = {
     {lpart, "lpart"}, {rpart, "rpart"}, {commat, "commat"},
     {colont, "colont"}, {idt, "idt"}, {numt, "numt"}, {strt, "strt"}, {assignt, "assignt"},
     {relopt, "relopt"}, {addopt, "addopt"}, {mulopt, "mulopt"}, {semit, "semit"}, {periodt, "periodt"}, 
-    {eoft, "eoft"}, {unknownt, "unknownt"}, {nott, "nott"}
+    {eoft, "eoft"}, {unknownt, "unknownt"}, {nott, "nott"}, {putlnt, "putlnt"}
 };
 
 class Scanner
