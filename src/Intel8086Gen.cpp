@@ -240,7 +240,7 @@ void Intel8086Gen::EmitProcCall(std::string P)
 void Intel8086Gen::EmitPush(const TACArg & a, bool ref)
 {
     std::string aSTR = tacArgToString(a);
-std::string offsetSTR = ref ? "offset " : "";
+    std::string offsetSTR = ref ? "offset " : "";
 
     codeSegment << std::setw(8) << ""; //No label
     codeSegment << std::setw(25) << "PUSH " + offsetSTR + aSTR;
@@ -320,9 +320,7 @@ void Intel8086Gen::EmitIO(bool write, bool string, bool line, const TACArg &x)
             }
             else
             {
-                codeSegment << std::setw(8) << "";
-                codeSegment << std::setw(25) << "MOV AX, " + xSTR;
-                codeSegment << std::endl;
+                storeLoadHelper(true, x.ref, "AX", xSTR);
 
                 codeSegment << std::setw(8) << "";
                 codeSegment << std::setw(25) << "CALL writeint";
@@ -336,9 +334,7 @@ void Intel8086Gen::EmitIO(bool write, bool string, bool line, const TACArg &x)
         codeSegment << std::setw(25) << "CALL readint";
         codeSegment << std::endl;
 
-        codeSegment << std::setw(8) << "";
-        codeSegment << std::setw(25) << "MOV " + xSTR + ", BX";
-        codeSegment << std::endl;
+        storeLoadHelper(false, x.ref, "BX", xSTR);
     }
 
     codeSegment << std::endl;
