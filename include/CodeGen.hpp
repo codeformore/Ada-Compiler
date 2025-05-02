@@ -113,7 +113,7 @@ public:
     virtual void EmitProcCall(std::string P) = 0;
     virtual void EmitPush(const TACArg & a, bool ref) = 0;
     virtual void EmitProcHead(std::string P) = 0;
-    virtual void EmitProcEnd(std::string P) = 0;
+    virtual void EmitProcEnd(std::string P, int sizeOfLocals, int sizeOfParams) = 0;
     virtual void EmitIO(bool write, bool string, bool line, const TACArg &x) = 0;
     virtual void EmitProgStart(std::string P) = 0;
     virtual void EmitProgEnd(std::string P) = 0;

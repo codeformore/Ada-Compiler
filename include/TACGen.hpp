@@ -38,7 +38,7 @@ public:
     void EmitProcCall(std::string P) override;
     void EmitPush(const TACArg & a, bool ref) override;
     void EmitProcHead(std::string P) override;
-    void EmitProcEnd(std::string P) override;
+    void EmitProcEnd(std::string P, int sizeOfLocals, int sizeOfParams) override;
     void EmitIO(bool write, bool string, bool line, const TACArg &x) override;
     void EmitProgStart(std::string P) override;
     void EmitProgEnd(std::string P) override;

@@ -21,14 +21,18 @@
 
 #include <CodeGen.hpp>
 #include <fstream>
+#include <vector>
 
 class Intel8086Gen : public CodeGen
 {
 private:
     std::ofstream outFile;
     std::string fileName; 
+    std::vector<std::streampos> localVarSizeLocations;
+    std::streampos globalsLoc;
 
     std::string tacArgToString(const TACArg & arg);
+    void storeLoadHelper(bool load, bool ref, std::string regis, std::string argSTR);
 public:
     Intel8086Gen(std::string theFileName);
     ~Intel8086Gen();
@@ -38,7 +42,7 @@ public:
     void EmitProcCall(std::string P) override;
     void EmitPush(const TACArg & a, bool ref) override;
     void EmitProcHead(std::string P) override;
-    void EmitProcEnd(std::string P) override;
+    void EmitProcEnd(std::string P, int sizeOfLocals, int sizeOfParams) override;
     void EmitIO(bool write, bool string, bool line, const TACArg &x) override;
     void EmitProgStart(std::string P) override;
     void EmitProgEnd(std::string P) override;
