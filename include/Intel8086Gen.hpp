@@ -22,12 +22,15 @@
 #include <CodeGen.hpp>
 #include <fstream>
 #include <vector>
+#include <sstream>
 
 class Intel8086Gen : public CodeGen
 {
 private:
     std::ofstream outFile;
     std::string fileName; 
+    std::stringstream codeSegment;
+    std::stringstream dataSegment;
     std::vector<std::streampos> localVarSizeLocations;
     std::streampos globalsLoc;
 
@@ -46,6 +49,7 @@ public:
     void EmitIO(bool write, bool string, bool line, const TACArg &x) override;
     void EmitProgStart(std::string P) override;
     void EmitProgEnd(std::string P) override;
+    void EmitGlobalVar(bool string, const TACArg & label, std::string data) override;
 };
 
 #endif

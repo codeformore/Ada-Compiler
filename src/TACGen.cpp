@@ -266,3 +266,7 @@ void TACGen::EmitProgEnd(std::string P)
     outFile << std::setw(16) << P;
     outFile << std::endl;
 }
+
+void TACGen::EmitGlobalVar(bool string, const TACArg & label, std::string data)
+{
+}

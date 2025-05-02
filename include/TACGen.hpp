@@ -42,6 +42,7 @@ public:
     void EmitIO(bool write, bool string, bool line, const TACArg &x) override;
     void EmitProgStart(std::string P) override;
     void EmitProgEnd(std::string P) override;
+    void EmitGlobalVar(bool string, const TACArg & label, std::string data) override;
 };
 
 #endif

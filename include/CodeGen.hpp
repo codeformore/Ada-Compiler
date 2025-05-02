@@ -117,6 +117,7 @@ public:
     virtual void EmitIO(bool write, bool string, bool line, const TACArg &x) = 0;
     virtual void EmitProgStart(std::string P) = 0;
     virtual void EmitProgEnd(std::string P) = 0;
+    virtual void EmitGlobalVar(bool string, const TACArg & label, std::string data) = 0;
 };
 
 #endif
