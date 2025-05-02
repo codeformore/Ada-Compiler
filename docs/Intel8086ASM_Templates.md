@@ -253,7 +253,7 @@ CALL writeln
 - **TAC Format**: `rdi t1`
 - **Assembly Translation**:
 ```asm
-CALL writeint
+CALL readint
 MOV BX, (t1)  ; Move read value to t1
 ```
 
