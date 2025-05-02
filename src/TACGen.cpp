@@ -6,13 +6,7 @@
 *** FILE: TACGen.cpp ***
 *** DESCRIPTION : A Three Address Code (TAC) Generator with TACArg Type ***
 *** EXPORTED FUNCTIONALITY : 
-* enum BinOp
-* enum UnOp
-* enum TACArgType
-* struct TACArg
-    TACArgType type
-    union { int offset; std::string value; std::string name }
-* class TACGen
+* class TACGen : CodeGen
     void EmitBinaryAssign(TACArg x, TACArg y, TACArg z, BinOp binOp)
     void EmitUnaryAssign(TACArg x, TACArg y, UnOp unaryOp)
     void EmitCopy(TACArg x, TACArg y)
@@ -221,6 +215,41 @@ void TACGen::EmitProcEnd(std::string P)
     //Output line end P
     outFile << std::setw(8) << "ENDP"; //Keyword call in column 1
     outFile << std::setw(16) << P; //P in column 2
+    outFile << std::endl; //Finish Line
+}
+
+void TACGen::EmitIO(bool write, bool string, bool line, const TACArg &x)
+{
+    std::string tacArgString = tacArgToString(x);
+    std::string instruction = "";
+    if (write)
+    {
+        instruction += "wr";
+    }
+    else
+    {
+        instruction += "rd";
+    }
+
+    if (line)
+    {
+        instruction += "ln";
+    }
+    else
+    {
+        if (string)
+        {
+            instruction += "s";
+        }
+        else
+        {
+            instruction += "i";
+        }
+    }
+
+    outFile << std::setw(8) << ""; //Nothing in column 1
+    outFile << std::setw(8) << instruction; //IO instruction in column 2
+    outFile << std::setw(16) << tacArgString; //emit tacArg in column 3
     outFile << std::endl; //Finish Line
 }
 
