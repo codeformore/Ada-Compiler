@@ -209,6 +209,7 @@ void SymTbl::InsertLiteral(std::string literal, int & literalNum)
     }
 
     literals[curLit] = literal;
+    literalNum = curLit;
     curLit += 1;
 }
 
