@@ -242,7 +242,7 @@ void Intel8086Gen::EmitPush(const TACArg & a, bool ref)
     std::string aSTR = tacArgToString(a);
 
     codeSegment << std::setw(8) << ""; //No label
-    codeSegment << std::setw(25) << "PUSH " << aSTR;
+    codeSegment << std::setw(25) << "PUSH " + aSTR;
     codeSegment << std::endl;
 }
 
