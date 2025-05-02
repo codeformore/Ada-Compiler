@@ -210,7 +210,7 @@ void TACGen::EmitProcHead(std::string P)
     outFile << std::endl; //Finish Line
 }
 
-void TACGen::EmitProcEnd(std::string P)
+void TACGen::EmitProcEnd(std::string P, int sizeOfLocals, int sizeOfParams)
 {
     //Output line end P
     outFile << std::setw(8) << "ENDP"; //Keyword call in column 1
