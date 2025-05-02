@@ -83,6 +83,7 @@ private:
     void a11_CreateTACArg(std::string lexeme, TACArg & retTACArg);
     void a12_GetBinaryOp(std::string opString, BinOp & op);
     void a13_GetUnaryOp(std::string opString, UnOp & op);
+    void a14_WriteGlobalVars(IdList *idList, bool isConst, VarConstType type, int value);
 public:
     void Parse();
     RDP(std::string fileName);

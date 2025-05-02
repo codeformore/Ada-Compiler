@@ -93,6 +93,10 @@ void RDP::declarativePart(int & size)
         float valueR;
         typeMark(isConst, theType, value, valueR);
         a5_InsertVarsAndConsts(size, idList, isConst, theType, value, valueR, false, false);
+        if (depth == 1)
+        {
+            a14_WriteGlobalVars(idList, isConst, theType, value);
+        }
         a9_DeallocateIdentiferList(idList);
         match(semit);
         declarativePart(size);
@@ -402,6 +406,11 @@ void RDP::moreTerm(TACArg & inArg, int & size, TACArg & outArg)
         a11_CreateTACArg(tempName, tempArg);
         //Emit operation
         codeGen->EmitBinaryAssign(tempArg, inArg, outTerm, theOp);
+        //If new temp is at depth 1, put in data segment
+        if (depth == 1)
+        {
+            codeGen->EmitGlobalVar(false, tempArg, "?");
+        }
         //More terms
         moreTerm(tempArg, size, outArg);
     }
@@ -441,6 +450,11 @@ void RDP::moreFactor(TACArg inArg, int & size, TACArg & outArg)
         a11_CreateTACArg(tempName, tempArg);
         //Emit operation
         codeGen->EmitBinaryAssign(tempArg, inArg, outFactor, theOp);
+        //If new temp is at depth 1, put in data segment
+        if (depth == 1)
+        {
+            codeGen->EmitGlobalVar(false, tempArg, "?");
+        }
         //More Factor
         moreFactor(tempArg, size, outArg);
     }
@@ -499,6 +513,11 @@ void RDP::factor(int & size, TACArg & outArg)
         a11_CreateTACArg(tempName, outArg);
         //Emit operation
         codeGen->EmitUnaryAssign(outArg, outFactor, theOp);
+        //If new temp is at depth 1, put in data segment
+        if (depth == 1)
+        {
+            codeGen->EmitGlobalVar(false, outArg, "?");
+        }
         break;
     
     default:
@@ -707,6 +726,7 @@ void RDP::Write_Token()
         symTbl.InsertLiteral(scanner.Literal, literalNum);
         outputTACArg = TACArg(LitTAC, false, literalNum);
         codeGen->EmitIO(true, true, false, outputTACArg);
+        codeGen->EmitGlobalVar(true, outputTACArg, symTbl.LookupLiteral(literalNum));
         match(strt);
     }
 }
@@ -961,5 +981,42 @@ void RDP::a13_GetUnaryOp(std::string opString, UnOp &op)
     else
     {
         throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": " + opString + " is not an implemented unary operation.");
+    }
+}
+
+void RDP::a14_WriteGlobalVars(IdList *idList, bool isConst, VarConstType type, int value)
+{
+    TACArg curArg;
+    while (idList != nullptr)
+    {
+        if (isConst)
+        {
+            switch (type.constType)
+            {
+            case IntConst:
+                curArg = TACArg(GlobalTAC, false, idList->id);
+                codeGen->EmitGlobalVar(false, curArg, std::to_string(value));
+                break;
+            
+            default:
+                throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Real constants have not been implemented.");
+                break;
+            }
+        }
+        else
+        {
+            switch (type.varType)
+            {
+            case IntVar:
+                curArg = TACArg(GlobalTAC, false, idList->id);
+                codeGen->EmitGlobalVar(false, curArg, "?");
+                break;
+            
+            default:
+                throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Real and Char variables have not been implemented.");
+                break;
+            }
+        }
+        idList = idList->next;
     }
 }
