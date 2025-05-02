@@ -12,12 +12,14 @@
 
 #include <RDP.hpp>
 #include <iostream>
+#include <Intel8086Gen.hpp>
 
 void RDP::Parse()
 {
     scanner.GetNextToken();
+    codeGen->EmitProgStart(""); //TODO: Remove ""
     std::string mainProcName = prog();
-    codeGen.EmitProgEnd(mainProcName);
+    codeGen->EmitProgEnd(mainProcName);
     symTbl.WriteTable(depth); //For assignment 5
     if (scanner.Token != eoft)
     {
@@ -25,7 +27,15 @@ void RDP::Parse()
     }
 }
 
-RDP::RDP(std::string fileName) : scanner(fileName), codeGen(fileName) {}
+RDP::RDP(std::string fileName) : scanner(fileName) 
+{
+    codeGen = new Intel8086Gen(fileName);
+}
+
+RDP::~RDP()
+{
+    delete codeGen;
+}
 
 void RDP::match(TokenT expected)
 {
@@ -50,16 +60,17 @@ std::string RDP::prog()
     depth++;
     Param* paramList = nullptr;
     args(paramList);
-    a3_AssignArgListToProc(paramList, newEntry);
+    int sizeOfParams;
+    a3_AssignArgListToProc(paramList, newEntry, sizeOfParams);
     match(ist);
     declarativePart(newEntry->procedure.size);
     procedures();
-    codeGen.EmitProcHead(newEntry->lexeme);
+    codeGen->EmitProcHead(newEntry->lexeme);
     match(begint);
     seqOfStatements(newEntry->procedure.size);
     symTbl.WriteTable(depth); //For Assignment 5
     a7_DeleteScope();
-    codeGen.EmitProcEnd(newEntry->lexeme);
+    codeGen->EmitProcEnd(newEntry->lexeme, newEntry->procedure.size, sizeOfParams);
     match(endt);
     a4_CheckClosingID(scanner.Lexeme, newEntry->lexeme);
     match(idt);
@@ -268,7 +279,7 @@ void RDP::mode(ParamMode & mode)
 // SeqOfStatements -> Statement semit StatTail | o
 void RDP::seqOfStatements(int & size)
 {
-    if (scanner.Token == idt || scanner.Token == semit)
+    if (scanner.Token == idt || scanner.Token == gett || scanner.Token == putt || scanner.Token == putlnt || scanner.Token == semit)
     {
         statement(size);
         match(semit);
@@ -281,7 +292,7 @@ void RDP::seqOfStatements(int & size)
 // StatTail -> Statement ; StatTail | o
 void RDP::statTail(int & size)
 {
-    if (scanner.Token == idt || scanner.Token == semit)
+    if (scanner.Token == idt || scanner.Token == gett || scanner.Token == putt || scanner.Token == putlnt || scanner.Token == semit)
     {
         statement(size);
         match(semit);
@@ -290,16 +301,19 @@ void RDP::statTail(int & size)
     //Otherwise, nullable
 }
 
+//Implements
+//??????
 void RDP::statement(int & size)
 {
     if (scanner.Token == idt)
     {
         assignStat(size);
     }
-    else 
+    else if (scanner.Token == gett || scanner.Token == putt || scanner.Token == putlnt)
     {
         IOStat();
     }
+    //Otherwise, nullable
 }
 
 //Implements:
@@ -316,7 +330,7 @@ void RDP::assignStat(int & size)
         match(assignt);
         TACArg exprArg;
         expr(size, exprArg);
-        codeGen.EmitCopy(idArg, exprArg);
+        codeGen->EmitCopy(idArg, exprArg);
     }
     else if (scanner.Token == lpart)
     {
@@ -387,7 +401,7 @@ void RDP::moreTerm(TACArg & inArg, int & size, TACArg & outArg)
         TACArg tempArg;
         a11_CreateTACArg(tempName, tempArg);
         //Emit operation
-        codeGen.EmitBinaryAssign(tempArg, inArg, outTerm, theOp);
+        codeGen->EmitBinaryAssign(tempArg, inArg, outTerm, theOp);
         //More terms
         moreTerm(tempArg, size, outArg);
     }
@@ -426,7 +440,7 @@ void RDP::moreFactor(TACArg inArg, int & size, TACArg & outArg)
         TACArg tempArg;
         a11_CreateTACArg(tempName, tempArg);
         //Emit operation
-        codeGen.EmitBinaryAssign(tempArg, inArg, outFactor, theOp);
+        codeGen->EmitBinaryAssign(tempArg, inArg, outFactor, theOp);
         //More Factor
         moreFactor(tempArg, size, outArg);
     }
@@ -484,7 +498,7 @@ void RDP::factor(int & size, TACArg & outArg)
         //Convert to TACArg
         a11_CreateTACArg(tempName, outArg);
         //Emit operation
-        codeGen.EmitUnaryAssign(outArg, outFactor, theOp);
+        codeGen->EmitUnaryAssign(outArg, outFactor, theOp);
         break;
     
     default:
@@ -508,7 +522,7 @@ void RDP::procCall(std::string idLexeme)
     match(rpart);
 
     //Emit the call
-    codeGen.EmitProcCall(entry->lexeme);
+    codeGen->EmitProcCall(entry->lexeme);
 }
 
 //Implements:
@@ -529,7 +543,7 @@ void RDP::params(Param *curParam)
         TACArg paramArg;
         a11_CreateTACArg(scanner.Lexeme, paramArg);
         //Emit Push
-        codeGen.EmitPush(paramArg, ref);
+        codeGen->EmitPush(paramArg, ref);
         match(idt);
         paramsTail(curParam->next);
     }
@@ -548,7 +562,7 @@ void RDP::params(Param *curParam)
         //Create TACArg from param
         TACArg paramArg = TACArg(ConstTAC, false, scanner.Lexeme);
         //Emit Push
-        codeGen.EmitPush(paramArg, false);
+        codeGen->EmitPush(paramArg, false);
         match(numt);
         paramsTail(curParam->next);
     }
@@ -581,7 +595,7 @@ void RDP::paramsTail(Param *curParam)
         TACArg paramArg;
         a11_CreateTACArg(scanner.Lexeme, paramArg);
         //Emit Push
-        codeGen.EmitPush(paramArg, ref);
+        codeGen->EmitPush(paramArg, ref);
         match(idt);
         paramsTail(curParam->next);
     }
@@ -600,7 +614,7 @@ void RDP::paramsTail(Param *curParam)
         //Create TACArg from param
         TACArg paramArg = TACArg(ConstTAC, false, scanner.Lexeme);
         //Emit Push
-        codeGen.EmitPush(paramArg, false);
+        codeGen->EmitPush(paramArg, false);
         match(numt);
         paramsTail(curParam->next);
     }
@@ -619,7 +633,7 @@ void RDP::In_Stat()
     while (tmp != nullptr)
     {
         a11_CreateTACArg(idList->id, curTacArg);
-        codeGen.EmitIO(false, false, false, curTacArg);
+        codeGen->EmitIO(false, false, false, curTacArg);
         tmp = tmp->next;
     }
     a9_DeallocateIdentiferList(idList);
@@ -645,7 +659,7 @@ void RDP::Out_Stat()
     Write_List();
     if (line)
     {
-        codeGen.EmitIO(true, false, true, TACArg());
+        codeGen->EmitIO(true, false, true, TACArg());
     }
     match(rpart);
 }
@@ -679,7 +693,7 @@ void RDP::Write_Token()
     if (scanner.Token == idt)
     {
         a11_CreateTACArg(scanner.Lexeme, outputTACArg);
-        codeGen.EmitIO(true, false, false, outputTACArg);
+        codeGen->EmitIO(true, false, false, outputTACArg);
         match(idt);
     }
     else if (scanner.Token == numt)
@@ -691,8 +705,8 @@ void RDP::Write_Token()
     {
         int literalNum;
         symTbl.InsertLiteral(scanner.Literal, literalNum);
-        outputTACArg = TACArg(GlobalTAC, false, "_S" + std::to_string(literalNum));
-        codeGen.EmitIO(true, true, false, outputTACArg);
+        outputTACArg = TACArg(LitTAC, false, literalNum);
+        codeGen->EmitIO(true, true, false, outputTACArg);
         match(strt);
     }
 }
@@ -714,14 +728,27 @@ SymTblEntry *RDP::a2_InsertProc(std::string lexeme, TokenT token)
     return theNewProc;
 }
 
-void RDP::a3_AssignArgListToProc(Param *start, SymTblEntry* entry)
+void RDP::a3_AssignArgListToProc(Param *start, SymTblEntry* entry, int & sizeOfParams)
 {
     entry->procedure.params = start;
     Param* tmp = entry->procedure.params;
     int numParams = 0;
+    sizeOfParams = 0;
     while (tmp != nullptr)
     {
         numParams++;
+        if (tmp->type == IntVar)
+        {
+            sizeOfParams += 2;
+        }
+        else if (tmp->type == RealVar)
+        {
+            sizeOfParams += 4;
+        }
+        else if (tmp->type == CharVar)
+        {
+            sizeOfParams += 1;
+        }
         tmp = tmp->next;
     }
     entry->procedure.numParams = numParams;

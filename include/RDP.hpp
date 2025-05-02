@@ -15,14 +15,14 @@
 
 #include <Scanner.hpp>
 #include <SymTbl.hpp>
-#include <TACGen.hpp>
+#include <CodeGen.hpp>
 
 class RDP
 {
 private:
     Scanner scanner;
     SymTbl symTbl;
-    TACGen codeGen;
+    CodeGen* codeGen;
     int depth = 0;
 
     void match(TokenT expected);
@@ -72,7 +72,7 @@ private:
     //Actions
     void a1_CheckDup(std::string lexeme);
     SymTblEntry* a2_InsertProc(std::string lexeme, TokenT token);
-    void a3_AssignArgListToProc(Param* start, SymTblEntry* entry);
+    void a3_AssignArgListToProc(Param* start, SymTblEntry* entry, int & sizeOfParams);
     void a4_CheckClosingID(std::string lexeme, std::string procName);
     void a5_InsertVarsAndConsts(int &curSize, IdList *idList, bool isConst, VarConstType type, int value, float valueR, bool posOffset, bool ref);
     void a6_AddModeAndType(Param* & cur, ParamMode mode, VarType varType, IdList* idList);
@@ -86,6 +86,7 @@ private:
 public:
     void Parse();
     RDP(std::string fileName);
+    ~RDP();
 };
 
 #endif
