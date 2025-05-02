@@ -92,10 +92,10 @@ void Intel8086Gen::storeLoadHelper(bool load, bool ref, std::string regis, std::
         if (ref)
         {
             codeSegment << std::setw(8) << ""; //No label
-            codeSegment << std::setw(25) << "MOV DX, " + argSTR;
+            codeSegment << std::setw(25) << "MOV BX, " + argSTR;
             codeSegment << std::endl;
             codeSegment << std::setw(8) << ""; //No label
-            codeSegment << std::setw(25) << "MOV " + regis + ", [DX]";
+            codeSegment << std::setw(25) << "MOV " + regis + ", [BX]";
             codeSegment << std::endl;
         }
         else
@@ -110,10 +110,10 @@ void Intel8086Gen::storeLoadHelper(bool load, bool ref, std::string regis, std::
         if (ref)
         {
             codeSegment << std::setw(8) << ""; //No label
-            codeSegment << std::setw(25) << "MOV DX, " + argSTR;
+            codeSegment << std::setw(25) << "MOV BX, " + argSTR;
             codeSegment << std::endl;
             codeSegment << std::setw(8) << ""; //No label
-            codeSegment << std::setw(25) << "MOV [DX], " + regis;
+            codeSegment << std::setw(25) << "MOV [BX], " + regis;
             codeSegment << std::endl;
         }
         else
@@ -240,9 +240,10 @@ void Intel8086Gen::EmitProcCall(std::string P)
 void Intel8086Gen::EmitPush(const TACArg & a, bool ref)
 {
     std::string aSTR = tacArgToString(a);
+std::string offsetSTR = ref ? "offset " : "";
 
     codeSegment << std::setw(8) << ""; //No label
-    codeSegment << std::setw(25) << "PUSH " + aSTR;
+    codeSegment << std::setw(25) << "PUSH " + offsetSTR + aSTR;
     codeSegment << std::endl;
 }
 
