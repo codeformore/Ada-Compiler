@@ -40,7 +40,7 @@ public:
     void EmitProcHead(std::string P) override;
     void EmitProcEnd(std::string P) override;
     void EmitIO(bool write, bool string, bool line, const TACArg &x) override;
-    void EmitProgStart(std::string P) override = 0;
+    void EmitProgStart(std::string P) override;
     void EmitProgEnd(std::string P) override;
 };
 

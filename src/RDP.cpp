@@ -612,8 +612,17 @@ void RDP::In_Stat()
 {
     match(gett);
     match(lpart);
-    IdList* idList;
+    IdList* idList = nullptr;
     identifierList(idList, false);
+    TACArg curTacArg;
+    IdList* tmp = idList;
+    while (tmp != nullptr)
+    {
+        a11_CreateTACArg(idList->id, curTacArg);
+        codeGen.EmitIO(false, false, false, curTacArg);
+        tmp = tmp->next;
+    }
+    a9_DeallocateIdentiferList(idList);
     match(rpart);
 }
 
@@ -621,16 +630,23 @@ void RDP::In_Stat()
 // Out_Stat -> putt lpart Write_List rpart | putlnt lpart Write_List rpart
 void RDP::Out_Stat()
 {
+    bool line;
     if (scanner.Token == putt)
     {
+        line = false;
         match(putt);
     }
     else
     {
+        line = true;
         match(putlnt);
     }
     match(lpart);
     Write_List();
+    if (line)
+    {
+        codeGen.EmitIO(true, false, true, TACArg());
+    }
     match(rpart);
 }
 
@@ -659,16 +675,24 @@ void RDP::Write_List_Tail()
 // Write_Token -> idt | numt | strt
 void RDP::Write_Token()
 {
+    TACArg outputTACArg;
     if (scanner.Token == idt)
     {
+        a11_CreateTACArg(scanner.Lexeme, outputTACArg);
+        codeGen.EmitIO(true, false, false, outputTACArg);
         match(idt);
     }
     else if (scanner.Token == numt)
     {
+        outputTACArg = TACArg(ConstTAC, false, scanner.Value);
         match(numt);
     }
     else if (scanner.Token == strt)
     {
+        int literalNum;
+        symTbl.InsertLiteral(scanner.Literal, literalNum);
+        outputTACArg = TACArg(GlobalTAC, false, "_S" + std::to_string(literalNum));
+        codeGen.EmitIO(true, true, false, outputTACArg);
         match(strt);
     }
 }

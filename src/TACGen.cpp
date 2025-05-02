@@ -220,7 +220,7 @@ void TACGen::EmitProcEnd(std::string P)
 
 void TACGen::EmitIO(bool write, bool string, bool line, const TACArg &x)
 {
-    std::string tacArgString = tacArgToString(x);
+    std::string tacArgString = "";
     std::string instruction = "";
     if (write)
     {
@@ -237,6 +237,7 @@ void TACGen::EmitIO(bool write, bool string, bool line, const TACArg &x)
     }
     else
     {
+        tacArgString = tacArgToString(x);
         if (string)
         {
             instruction += "s";
@@ -251,6 +252,10 @@ void TACGen::EmitIO(bool write, bool string, bool line, const TACArg &x)
     outFile << std::setw(8) << instruction; //IO instruction in column 2
     outFile << std::setw(16) << tacArgString; //emit tacArg in column 3
     outFile << std::endl; //Finish Line
+}
+
+void TACGen::EmitProgStart(std::string P)
+{
 }
 
 void TACGen::EmitProgEnd(std::string P)
