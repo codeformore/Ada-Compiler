@@ -233,9 +233,9 @@ void RDP::argList(Param* & paramList, int & size)
     {
         throw std::runtime_error(scanner.FileName + ":" + std::to_string(scanner.LineNum) + ": Constant Typed Arguments are not allowed.");
     }
+    a6_AddModeAndType(paramList, theMode, theType.varType, idList);
     moreArgs(paramList, size);
     a5_InsertVarsAndConsts(size, idList, isConst, theType, value, valueR, true, (theMode != InMode));
-    a6_AddModeAndType(paramList, theMode, theType.varType, idList);
     a9_DeallocateIdentiferList(idList);
 }
 
